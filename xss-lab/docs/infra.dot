@@ -1,0 +1,7 @@
+digraph INFRA {
+  node [ color = "black", fillcolor = "#E6E6E6", height =1, style = "filled,bold,rounded", fontname = "Arial" ];
+  "mysql_container" [ label = "mysql_container
+(docker::container)", shape =cylinder, fillcolor = "#FFCFB3" ];
+  "mysql_data" [ label = "mysql_data
+(docker::volume)", shape =cylinder, fillcolor = "#FFF5CD" ];
+}
