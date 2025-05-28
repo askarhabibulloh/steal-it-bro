@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gates of Olympus Slot</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap");
+
+      body {
+        font-family: "Cormorant Garamond", serif;
+        background: url("https://media.umbraco.io/artemis-cms/im3aibgs/bg-001_gates-of-olympus.jpg")
+          center/cover no-repeat fixed;
+        color: #e0e0e0;
+        line-height: 1.6;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      @keyframes cloudMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 100% 50%;
+        }
+      }
+
+      @keyframes lightning {
+        0%,
+        100% {
+          opacity: 0;
+        }
+        1%,
+        3%,
+        5% {
+          opacity: 0.1;
+        }
+        2%,
+        4% {
+          opacity: 0.3;
+        }
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      h1 {
+        font-family: "Cinzel", serif;
+        font-size: 4rem;
+        color: #ffd700;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.7),
+          0 0 20px rgba(255, 215, 0, 0.5), 0 2px 5px rgba(0, 0, 0, 0.8);
+        letter-spacing: 3px;
+        margin: 1rem 0;
+        position: relative;
+        z-index: 2;
+      }
+      .slot-machine {
+        background: rgba(40, 10, 60, 0.7);
+        border: 4px solid #ffd700;
+        border-radius: 15px;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+      }
+      .slot-reels {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 30px 0;
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid #ffd700;
+        border-radius: 10px;
+        padding: 20px;
+      }
+      .reel {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        background: linear-gradient(145deg, #f8f8f8, #ffffff);
+        border-radius: 8px;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s;
+      }
+
+      button#spin-btn {
+        font-family: "Cinzel", serif;
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.3)
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="%23ffffff" opacity="0.3"/></svg>');
+        color: #ffd700;
+        border: 2px solid #ffd700;
+        border-radius: 8px;
+        padding: 15px 40px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3),
+          inset 0 0 10px rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      button#spin-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.5),
+          inset 0 0 15px rgba(255, 255, 255, 0.3);
+      }
+
+      #result {
+        font-size: 24px;
+        margin: 20px 0;
+        min-height: 36px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        color: gold;
+        font-weight: bold;
+      }
+
+      .info-box {
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.8),
+            rgba(255, 255, 255, 0.9)
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="%23ffffff" opacity="0.1"/></svg>');
+        border: 2px solid #ffd700;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 30px auto;
+        max-width: 800px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+
+      .lightning-effect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.1),
+            transparent
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M50,0 L70,40 L50,30 L80,100 L50,70 L20,100 L50,50 Z" fill="%23ffffff" opacity="0"/></svg>');
+        pointer-events: none;
+        animation: lightning 15s infinite;
+      }
+
+      .cloud-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100"><path d="M20,50 Q40,30 60,50 T100,50 Q120,30 140,50 T180,50" fill="none" stroke="%23ffffff" stroke-width="2" opacity="0.1"/></svg>')
+          repeat-x;
+        animation: cloudMove 60s linear infinite;
+        z-index: -1;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          background-attachment: scroll;
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+          margin: 0.5rem 0;
+        }
+
+        .slot-machine {
+          padding: 15px;
+          margin: 10px 0;
+        }
+
+        .slot-reels {
+          flex-wrap: wrap;
+          gap: 8px;
+          padding: 10px;
+        }
+
+        .reel {
+          width: 60px;
+          height: 60px;
+          font-size: 30px;
+        }
+
+        button#spin-btn {
+          padding: 12px 25px;
+          font-size: 1.2rem;
+          margin: 15px auto;
+        }
+
+        .info-box {
+          padding: 15px;
+          margin: 20px 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .slot-reels {
+          gap: 5px;
+        }
+
+        .reel {
+          width: 50px;
+          height: 50px;
+          font-size: 24px;
+        }
+
+        button#spin-btn {
+          padding: 10px 20px;
+          font-size: 1rem;
+        }
+
+        #result {
+          font-size: 18px;
+        }
+      }
+
+      @media screen and (max-width: 767px) {
+        input,
+        select,
+        textarea {
+          font-size: 16px;
+        }
+      }
+
+      button,
+      .reel {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      @media (hover: none) {
+        button#spin-btn:hover {
+          transform: none;
+          box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cloud-bg"></div>
+    <div class="lightning-effect"></div>
+
+    <div class="container">
+      <h1>GATES OF OLYMPUS</h1>
+      <div class="slot-machine">
+        <div class="slot-reels">
+          <% Array(7).fill().forEach((_, i) => { %>
+          <div class="reel" id="reel-<%= i %>">🍒</div>
+          <% }); %>
+        </div>
+        <button id="spin-btn">Putar Slot</button>
+        <p id="result"></p>
+      </div>
+      <script>
+        const symbols = [
+          "🍒",
+          "🍋",
+          "🍊",
+          "⭐",
+          "7",
+          "🍇",
+          "🍉",
+          "🍓",
+          "🍍",
+          "🍎",
+          "🍐",
+          "🍑",
+        ];
+
+        document
+          .getElementById("spin-btn")
+          .addEventListener("click", async () => {
+            try {
+              const response = await fetch("/spin", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isAdmin: false }),
+              });
+
+              if (!response.ok) throw new Error("Network response was not ok");
+              const data = await response.json();
+
+              const reels = Array(7)
+                .fill()
+                .map((_, i) => document.getElementById(`reel-${i}`));
+
+              for (let i = 0; i < 5; i++) {
+                await new Promise((resolve) =>
+                  setTimeout(resolve, 100 + i * 50)
+                );
+                reels.forEach((reel) => {
+                  reel.style.transform = `rotateX(${i % 2 ? 10 : -10}deg)`;
+                  reel.textContent =
+                    symbols[Math.floor(Math.random() * symbols.length)];
+                });
+              }
+              reels.forEach((reel) => (reel.style.transform = "rotateX(0)"));
+              data.reels.forEach((symbol, i) => {
+                reels[i].textContent = symbol;
+              });
+              document.getElementById("result").textContent = data.message;
+            } catch (error) {
+              console.error("Error:", error);
+              document.getElementById("result").textContent =
+                "Error: Gagal memutar slot";
+            }
+          });
+      </script>
+    </div>
+  </body>
+</html>

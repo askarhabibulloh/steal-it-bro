@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slot Statistics</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+        background-color: #f5f5f5;
+      }
+      .stats-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 30px 0;
+      }
+      .stat-box {
+        padding: 20px;
+        border-radius: 10px;
+        width: 40%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .wins {
+        background: linear-gradient(135deg, #4caf50, #81c784);
+        color: white;
+      }
+      .losses {
+        background: linear-gradient(135deg, #f44336, #e57373);
+        color: white;
+      }
+      .stat-number {
+        font-size: 3em;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+      .refresh-btn {
+        padding: 10px 20px;
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        margin-top: 20px;
+      }
+      .last-updated {
+        margin-top: 20px;
+        color: #666;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Slot Game Statistics</h1>
+
+    <div class="stats-container">
+      <div class="stat-box wins">
+        <h3>Total Wins</h3>
+        <div class="stat-number" id="win-count"><%= wins %></div>
+        <p>Jackpot victories</p>
+      </div>
+      <div class="stat-box losses">
+        <h3>Total Losses</h3>
+        <div class="stat-number" id="loss-count"><%= losses %></div>
+        <p>Non-winning spins</p>
+      </div>
+    </div>
+
+    <button class="refresh-btn" id="refresh-btn">Refresh Stats</button>
+    <div class="last-updated" id="last-updated"></div>
+
+    <script>
+      const eventSource = new EventSource("/counter/stream");
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        document.getElementById("win-count").textContent = data.wins;
+        document.getElementById("loss-count").textContent = data.losses;
+        document.getElementById(
+          "last-updated"
+        ).textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+      };
+
+      eventSource.onerror = () => {
+        console.log("SSE connection error");
+      };
+
+      document.getElementById("refresh-btn").addEventListener("click", () => {
+        eventSource.close();
+        eventSource = new EventSource("/counter/stream");
+      });
+    </script>
+  </body>
+</html>

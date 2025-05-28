@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Demo Slot - Admin Panel</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+        background-color: #f5f5f5;
+      }
+      .admin-panel {
+        background: #333;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        color: white;
+        text-align: left;
+      }
+      .control-group {
+        margin: 15px 0;
+        padding: 15px;
+        background: #444;
+        border-radius: 5px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      .disclaimer {
+        color: red;
+        font-weight: bold;
+      }
+      .status-box {
+        margin-top: 20px;
+        padding: 10px;
+        background: #555;
+        border-radius: 5px;
+        font-family: monospace;
+      }
+      input[type="checkbox"] {
+        transform: scale(1.5);
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ADMIN PANEL - Kontrol Manipulasi Slot</h1>
+    <p class="disclaimer">⚠️ HANYA UNTUK EDUKASI! JANGAN DISALAHGUNAKAN!</p>
+
+    <div class="admin-panel">
+      <div class="control-group">
+        <h3>Kontrol Hasil Slot</h3>
+        <label>
+          <input type="checkbox" id="force-win" />
+          <strong>Paksa Menang</strong> (Jackpot 777)
+        </label>
+        <br /><br />
+        <label>
+          <input type="checkbox" id="force-loss" />
+          <strong>Paksa Kalah</strong> (Kombinasi acak)
+        </label>
+        <p>
+          <small
+            >Note: Jika keduanya aktif, "Paksa Menang" akan diutamakan</small
+          >
+        </p>
+      </div>
+
+      <div class="control-group">
+        <h3>Reset Statistics</h3>
+        <button id="reset-counter">Reset Win/Loss Counter</button>
+        <p><small>Note: This will reset for all players</small></p>
+      </div>
+
+      <button id="save-settings">Simpan Pengaturan</button>
+
+      <div class="status-box" id="status">Status: Menunggu perubahan...</div>
+    </div>
+
+    <div class="info-box">
+      <h3>Informasi Sistem</h3>
+      <p>
+        Pengaturan disimpan di <code>settings.json</code> dan akan memengaruhi:
+      </p>
+      <ul>
+        <li>Semua player yang terhubung</li>
+        <li>Bertahan meski server restart</li>
+        <li>Efek langsung setelah disimpan</li>
+      </ul>
+      <p>File settings: <code id="settings-path"></code></p>
+    </div>
+
+    <script>
+      // Elemen UI
+      const forceWinCheckbox = document.getElementById("force-win");
+      const forceLossCheckbox = document.getElementById("force-loss");
+      const saveBtn = document.getElementById("save-settings");
+      const statusDiv = document.getElementById("status");
+      const settingsPathSpan = document.getElementById("settings-path");
+
+      // Load settings saat halaman dimuat
+      async function loadSettings() {
+        try {
+          const response = await fetch("/spin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isAdmin: true }), // Request khusus untuk admin
+          });
+
+          if (!response.ok) throw new Error("Gagal memuat settings");
+
+          const data = await response.json();
+
+          // Debug: console.log('Current settings:', data.settings);
+
+          // Update UI dengan settings saat ini
+          if (data.settings) {
+            forceWinCheckbox.checked = data.settings.forceWin || false;
+            forceLossCheckbox.checked = data.settings.forceLoss || false;
+            statusDiv.textContent = `Status: Settings loaded (Force Win: ${data.settings.forceWin}, Force Loss: ${data.settings.forceLoss})`;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          statusDiv.textContent = "Error: Gagal memuat settings";
+          statusDiv.style.color = "red";
+        }
+      }
+
+      // Save settings
+      saveBtn.addEventListener("click", async () => {
+        const settings = {
+          forceWin: forceWinCheckbox.checked,
+          forceLoss: forceLossCheckbox.checked,
+        };
+
+        statusDiv.textContent = "Status: Menyimpan...";
+        statusDiv.style.color = "yellow";
+
+        try {
+          const response = await fetch("/admin/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(settings),
+          });
+
+          if (!response.ok) throw new Error("Gagal menyimpan");
+
+          const result = await response.json();
+          statusDiv.textContent = `Status: Berhasil disimpan! (Force Win: ${settings.forceWin}, Force Loss: ${settings.forceLoss})`;
+          statusDiv.style.color = "lightgreen";
+
+          // Debug: console.log('Save result:', result);
+        } catch (error) {
+          console.error("Error:", error);
+          statusDiv.textContent = "Error: Gagal menyimpan settings";
+          statusDiv.style.color = "red";
+        }
+      });
+
+      document
+        .getElementById("reset-counter")
+        .addEventListener("click", async () => {
+          const confirmReset = confirm(
+            "Are you sure you want to reset all counters?"
+          );
+          if (!confirmReset) return;
+
+          try {
+            const response = await fetch("/admin/reset-counter", {
+              method: "POST",
+            });
+            const result = await response.json();
+            alert(
+              result.success ? "Counters reset successfully" : "Reset failed"
+            );
+          } catch (error) {
+            console.error("Reset error:", error);
+            alert("Error resetting counters");
+          }
+        });
+
+      // Tampilkan path settings.json
+      settingsPathSpan.textContent = window.location.host + "/settings.json";
+
+      // Load settings saat pertama kali
+      loadSettings();
+    </script>
+  </body>
+</html>
