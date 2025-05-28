@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Simulasi Antrian with VueJS</title>
+    <style>
+      table,
+      th,
+      td {
+        margin-bottom: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      input {
+        border: none;
+        border-radius: 0;
+      }
+      th {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <caption>
+        Simulasi Otomatis
+      </caption>
+      <table>
+        <tr>
+          <th>λ (kunjungan/menit)</th>
+          <th>Durasi Simulasi (menit)</th>
+          <th>Aksi</th>
+        </tr>
+        <tr>
+          <td>
+            <input type="number" v-model.number="lambda" min="0.1" step="0.1" />
+          </td>
+          <td>
+            <input type="number" v-model.number="durasiSimulasi" min="1" />
+          </td>
+          <td><button @click="generatePoissonInput">Generate</button></td>
+        </tr>
+      </table>
+
+      <caption>
+        Input
+      </caption>
+      <table>
+        <tr>
+          <th>Nomor Pelanggan</th>
+          <th>Jam Kedatangan</th>
+          <th>Durasi Pelayanan (detik)</th>
+        </tr>
+        <tr v-for="n in jumlahInput" :key="n">
+          <td>{{n}}</td>
+          <td>
+            <input
+              type="time"
+              step="1"
+              v-model="dataInput[n-1].waktu_datang_raw"
+            />
+          </td>
+          <td>
+            <input
+              type="number"
+              placeholder="detik"
+              v-model.number="dataInput[n-1].waktu_pelayanan"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="text-align: center">
+            <button style="width: 100%; border: none" @click="tambahInput">
+              Tambah Pelanggan Baru
+            </button>
+          </td>
+        </tr>
+      </table>
+
+      <caption>
+        Generated Table Pertama
+      </caption>
+      <table>
+        <tr>
+          <th>Nomor Pelanggan</th>
+          <th>Jam Kedatangan</th>
+          <th>Durasi Pelayanan (detik)</th>
+          <th>Jam Keluar</th>
+          <th>Durasi Tunggu (detik)</th>
+          <th>Durasi di Supermarket (detik)</th>
+        </tr>
+        <tr v-for="n in generatedDataPertama" :key="n.nomor_pelanggan">
+          <td>{{ n.nomor_pelanggan }}</td>
+          <td>{{ formatTime(n.waktu_datang) }}</td>
+          <td>{{ n.waktu_pelayanan }}</td>
+          <td>{{ formatTime(n.waktu_keluar) }}</td>
+          <td>{{ n.waktu_tunggu }}</td>
+          <td>{{ n.waktu_di_supermarket }}</td>
+        </tr>
+      </table>
+
+      <caption>
+        Generated Table Kedua
+      </caption>
+      <table>
+        <tr>
+          <th>Timestamp</th>
+          <th>Nomor Pelanggan</th>
+          <th>Tipe Kejadian</th>
+          <th>Pelanggan di Antrian ke</th>
+          <th>Jumlah Pelanggan di Dalam Supermarket</th>
+          <th>Status Kasir</th>
+          <th>Durasi Kasir Nganggur (detik)</th>
+        </tr>
+        <tr
+          v-for="n in generatedDataKedua"
+          :key="n.waktu_datang_atau_keluar + '-' + n.pelanggan_ke"
+        >
+          <td>{{ formatTime(n.waktu_datang_atau_keluar) }}</td>
+          <td>{{ n.pelanggan_ke }}</td>
+          <td>{{ n.tipe_kejadian }}</td>
+          <td>{{ n.pelanggan_di_antrian_ke }}</td>
+          <td>{{ n.jumlah_pelanggan_di_dalam }}</td>
+          <td>{{ n.status_kasir }}</td>
+          <td>{{ n.kasir_nganggur ?? '-' }}</td>
+        </tr>
+      </table>
+
+      <caption>
+        nb : Web ini tidak menggunakan fitur storage jadi ketika direfresh akan
+        hilang datanya
+        <br />
+        flow penggunaan : tambah pelanggan baru >> isi jam kedatangan >> isi
+        durasi pelayanan >> ulangi
+        <br />
+        <br />
+        masih ada bug jika tidak mengikuti flow diatas,
+        <br />misal menggunakan flow seperti ini tambah pelanggan baru >> tambah
+        pelanggan baru >> baru lengkapi data
+      </caption>
+    </div>
+  </body>
+  <script>
+    const App = {
+      data() {
+        return {
+          lambda: 1, // default 1 pelanggan per menit
+          durasiSimulasi: 10, // default 10 menit simulasi
+          dataInput: [],
+        };
+      },
+      computed: {
+        jumlahInput() {
+          return this.dataInput.length;
+        },
+        generatedDataPertama() {
+          let generatedData = [];
+          for (let index = 0; index < this.dataInput.length; index++) {
+            const dataSekarang = this.dataInput[index];
+            const isIndex = index === 0;
+            const prev = generatedData[index - 1];
+
+            const [jam, menit, detik] = (
+              dataSekarang.waktu_datang_raw || "00:00:00"
+            )
+              .split(":")
+              .map(Number);
+            const waktu_datang = jam * 3600 + menit * 60 + (detik || 0);
+            const waktu_pelayanan = Number(dataSekarang.waktu_pelayanan || 0);
+
+            let waktu_keluar = 0;
+            let waktu_tunggu = 0;
+
+            if (isIndex || (prev && prev.waktu_keluar <= waktu_datang)) {
+              waktu_keluar = waktu_datang + waktu_pelayanan;
+            } else {
+              waktu_keluar = prev.waktu_keluar + waktu_pelayanan;
+            }
+
+            if (prev && prev.waktu_keluar > waktu_datang) {
+              waktu_tunggu = prev.waktu_keluar - waktu_datang;
+            } else {
+              waktu_tunggu = 0;
+            }
+
+            const waktu_di_supermarket = waktu_keluar - waktu_datang;
+
+            generatedData.push({
+              nomor_pelanggan: dataSekarang.nomor_pelanggan,
+              waktu_datang,
+              waktu_pelayanan: dataSekarang.waktu_pelayanan,
+              waktu_keluar,
+              waktu_tunggu,
+              waktu_di_supermarket,
+            });
+          }
+          return generatedData;
+        },
+        generatedDataKedua() {
+          const events = [];
+
+          for (const item of this.generatedDataPertama) {
+            events.push({
+              nomor_pelanggan: item.nomor_pelanggan,
+              jenis_event: "datang",
+              waktu: item.waktu_datang,
+            });
+            events.push({
+              nomor_pelanggan: item.nomor_pelanggan,
+              jenis_event: "pergi",
+              waktu: item.waktu_keluar,
+            });
+          }
+
+          events.sort((a, b) => {
+            if (a.waktu !== b.waktu) return a.waktu - b.waktu;
+            return a.jenis_event === "pergi" ? -1 : 1;
+          });
+
+          const output = [];
+          let pelanggan_di_supermarket = 0;
+          let status_kasir = "nganggur";
+          let last_waktu_nganggur = 0;
+
+          if (events.length > 0) {
+            const waktu_datang_pertama = events[0].waktu;
+            if (waktu_datang_pertama > 0) {
+              output.push({
+                waktu_datang_atau_keluar: 0,
+                pelanggan_ke: null,
+                tipe_kejadian: "supermarket buka",
+                pelanggan_di_antrian_ke: " ",
+                jumlah_pelanggan_di_dalam: " ",
+                status_kasir: "nganggur",
+                kasir_nganggur: "-",
+              });
+            }
+          }
+
+          for (const event of events) {
+            if (event.jenis_event === "datang") {
+              pelanggan_di_supermarket++;
+            } else {
+              pelanggan_di_supermarket--;
+            }
+
+            const pelanggan_di_antrian = Math.max(
+              pelanggan_di_supermarket - 1,
+              0
+            );
+            const kasir_sekarang =
+              pelanggan_di_supermarket === 0 ? "nganggur" : "kerja";
+
+            let waktu_kasir_nganggur = null;
+
+            if (
+              status_kasir === "nganggur" &&
+              kasir_sekarang === "kerja" &&
+              last_waktu_nganggur !== null
+            ) {
+              waktu_kasir_nganggur = event.waktu - last_waktu_nganggur;
+            }
+
+            if (kasir_sekarang === "nganggur") {
+              last_waktu_nganggur = event.waktu;
+            }
+
+            output.push({
+              waktu_datang_atau_keluar: event.waktu,
+              pelanggan_ke: event.nomor_pelanggan,
+              tipe_kejadian: event.jenis_event,
+              pelanggan_di_antrian_ke: pelanggan_di_antrian,
+              jumlah_pelanggan_di_dalam: pelanggan_di_supermarket,
+              status_kasir: kasir_sekarang,
+              kasir_nganggur: waktu_kasir_nganggur,
+            });
+
+            status_kasir = kasir_sekarang;
+          }
+
+          return output;
+        },
+      },
+      methods: {
+        generatePoissonInput() {
+          this.dataInput = [];
+
+          const totalDetikSimulasi = this.durasiSimulasi * 60;
+          let currentTime = 0;
+          let pelanggan = 1;
+
+          const getInterarrivalTime = () => {
+            const u = Math.random();
+            return -Math.log(1 - u) / this.lambda;
+          };
+
+          while (currentTime < totalDetikSimulasi) {
+            const interArrival = getInterarrivalTime() * 60; // konversi ke detik
+            currentTime += Math.floor(interArrival);
+            if (currentTime >= totalDetikSimulasi) break;
+
+            const waktu = new Date(currentTime * 1000)
+              .toISOString()
+              .substr(11, 8); // format HH:MM:SS
+
+            this.dataInput.push({
+              nomor_pelanggan: pelanggan++,
+              waktu_datang_raw: waktu,
+              waktu_pelayanan: Math.floor(30 + Math.random() * 60), // 30–90 detik random
+            });
+          }
+        },
+        tambahInput() {
+          this.dataInput.push({
+            nomor_pelanggan: this.dataInput.length + 1,
+            waktu_datang_raw: "00:00:00",
+            waktu_pelayanan: 0,
+          });
+        },
+        formatTime(totalSeconds) {
+          const jam = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+          const menit = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
+            2,
+            "0"
+          );
+          const detik = String(totalSeconds % 60).padStart(2, "0");
+          return `${jam}:${menit}:${detik}`;
+        },
+      },
+    };
+
+    Vue.createApp(App).mount("#app");
+  </script>
+</html>
