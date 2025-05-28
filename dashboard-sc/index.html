@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Data Penggunaan Ruangan</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Menggunakan font Poppins atau Montserrat untuk seluruh halaman */
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+      /* Aturan lainnya untuk memastikan elemen lain menggunakan font yang sama */
+      th,
+      td,
+      h2,
+      h3,
+      span,
+      button {
+        font-family: "Poppins", sans-serif;
+      }
+    </style>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        border: 1px solid #e5e7eb;
+        padding: 12px;
+        text-align: left;
+      }
+      th {
+        background-color: #f8fafc;
+        color: #1e40af;
+        font-weight: 600;
+      }
+      tr:hover {
+        background-color: #f8fafc;
+      }
+      #filter {
+        margin-top: 10px;
+      }
+      .date-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      .date-nav-button {
+        background-color: #2563eb;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .date-nav-button:hover {
+        background-color: #1d4ed8;
+      }
+      .day-name {
+        font-weight: 600;
+        color: #1e40af;
+        margin: 0 1rem;
+        min-width: 100px;
+        text-align: center;
+      }
+      #dateFilter {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      h2 {
+        text-align: center;
+        color: #1e40af;
+        margin-bottom: 1.5rem;
+      }
+      h3 {
+        color: #1e40af;
+        margin-top: 2rem;
+      }
+      h3 a {
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 0.875rem;
+        margin-left: 0.5rem;
+      }
+      h3 a:hover {
+        text-decoration: underline;
+      }
+      section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+      }
+      body {
+        background-color: #f8fafc;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+    </style>
+
+    <link rel="icon" type="image/png" href="favicon.png" />
+  </head>
+
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-2CKP2KLB9G"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-2CKP2KLB9G");
+  </script>
+  <body>
+    <h2>Data Penggunaan Ruangan Student Center UINSK</h2>
+
+    <div class="date-navigation">
+      <button id="prevDate" class="date-nav-button">◀</button>
+      <span id="dayName" class="day-name">Hari</span>
+      <input type="date" id="dateFilter" />
+      <button id="nextDate" class="date-nav-button">▶</button>
+    </div>
+
+
+    <div id="table-container"></div>
+
+
+
+
+
+<!-- Add loading indicator inside recommendation section -->
+  <div
+  id="recommendation-section"
+  style="display: none; margin-top: 20px; text-align: center"
+>
+  <!-- <button id="recommendBtn" class="date-nav-button">
+    Dapatkan Informasi Jam Kosong
+  </button> -->
+  <div id="api-loading" style="display: none; margin: 10px 0">
+    Memproses rekomendasi...
+  </div>
+  <div id="recommendation-container" style="margin-top: 15px"></div>
+</div>
+<div
+  id="recommendation-section"
+  style="display: none; margin-top: 20px; text-align: center"
+>
+  <!-- <button id="recommendBtn" class="date-nav-button">
+    Dapatkan Rekomendasi Ruang
+  </button> -->
+  <div id="api-loading" style="display: none; margin: 10px 0">
+    Memproses rekomendasi...
+  </div>
+  <div id="recommendation-container" style="margin-top: 15px"></div>
+</div>
+</div>
+
+
+    <div
+      id="recommendation-section"
+      style="display: none; margin-top: 20px; text-align: center"
+    >
+      <!-- <button id="recommendBtn" class="date-nav-button">
+        Dapatkan Rekomendasi Ruang
+      </button> -->
+      <div id="recommendation-container" style="margin-top: 15px"></div>
+    </div>
+    <script src="parserasdf.js"></script>
+    <script src="date-utilsasdf.js"></script>
+    <script src="scriptasdf.js"></script>
+    <script src="slot_data.js"></script>
+
+    <script>
+      function checkRecommendationTime() {
+        const now = new Date();
+        const hours = now.getUTCHours();
+        const minutes = now.getUTCMinutes();
+        const currentUTCTime = hours + minutes / 60;
+
+        const shouldShow = currentUTCTime >= 1.5 || currentUTCTime < 0;
+        document.getElementById("recommendation-section").style.display =
+          shouldShow ? "block" : "none";
+      }
+
+      checkRecommendationTime();
+      setInterval(checkRecommendationTime, 60000);
+    </script>
+  </body>
+</html>
