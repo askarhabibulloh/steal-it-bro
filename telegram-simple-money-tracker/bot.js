@@ -44,10 +44,19 @@ function exportCsv(chatId) {
     }
 
     const header = "id,amount,type,description,timestamp";
+
+    const escapeCsv = (str) => {
+      if (typeof str !== "string") return str;
+      return `"${str.replace(/"/g, '""')}"`; // Escape kutip
+    };
+
     const lines = rows.map(
       (row) =>
-        `${row.id},${row.amount},${row.type},${row.description},${row.timestamp}`
+        `${row.id},${row.amount},${row.type},${escapeCsv(row.description)},${
+          row.timestamp
+        }`
     );
+
     const content = [header, ...lines].join(os.EOL);
 
     const filePath = path.join(__dirname, "export.csv");
