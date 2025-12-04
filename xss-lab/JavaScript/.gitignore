@@ -1,0 +1,4 @@
+node_modules/
+xss_lab.db
+npm-debug.log*
+.env
