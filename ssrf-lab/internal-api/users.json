@@ -1,0 +1,15 @@
+
+[
+  {
+    "id": "usr-001",
+    "name": "Admin User",
+    "email": "admin@internal-corp.thm",
+    "role": "administrator"
+  },
+  {
+    "id": "usr-002",
+    "name": "Jane Doe",
+    "email": "jane.doe@internal-corp.thm",
+    "role": "support_engineer"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "location": "london",
+    "status": "In Stock"
+  },
+  {
+    "location": "paris",
+    "status": "Out of Stock"
+  },
+  {
+    "location": "berlin",
+    "status": "In Stock"
+  },
+  {
+    "location": "tokyo",
+    "status": "Out of Stock"
+  }
+]

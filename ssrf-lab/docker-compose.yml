@@ -1,0 +1,18 @@
+services:
+  web-app:
+    build: ./web-app
+    ports:
+      - "3000:3000"
+    networks:
+      - ssrf-network
+    depends_on:
+      - internal-api
+
+  internal-api:
+    build: ./internal-api
+    networks:
+      - ssrf-network
+
+networks:
+  ssrf-network:
+    driver: bridge

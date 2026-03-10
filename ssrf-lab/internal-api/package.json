@@ -1,0 +1,12 @@
+{
+  "name": "internal-api",
+  "version": "1.0.0",
+  "description": "Internal API service for SSRF Lab",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
