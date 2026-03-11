@@ -34,6 +34,89 @@ Precision-focused tactical interface inspired by Valorant with zero rounding, ag
 >
 > **Typography Contrast:** Use crisp white and electric accent colors (cyan, red) for all text against the dark panels.
 
+## [2. Accessibility]
+
+> **Contrast & Military Colors:** Dark tactical colors (deep grays, blacks, dark olive) combined with bright accent lines (neon green, red, yellow) generally provide strong contrast. Test specific color combinations for WCAG compliance—some neon+dark combos may need adjustment.
+>
+> **Focus States:** Use bright accent color for focus (e.g., neon outline or tactical glow). Ensure focus indicator is unmissable in tactical layouts.
+>
+> **Semantic Structure:** Despite technical aesthetic, use semantic HTML. Buttons as `<button>` elements, proper heading hierarchy, form labels associated with inputs. Tactical doesn't mean semantically messy.
+>
+> **Reduced Motion:** Tactical designs can have staggered animations or scan effects. Provide `@media (prefers-reduced-motion: reduce)` to disable animations—layout remains clear and static.
+>
+> **Information Architecture:** Tactical layouts are information-dense. Ensure logical tab order and clear navigation paths. Use ARIA labels for obscure icons or abbreviated labels.
+
+## [3. Responsive Design]
+
+> **Breakpoints:**
+>
+> - **Mobile (320px - 480px):** Stack tactical elements vertically. Reduce accent line complexity—hide secondary data. Minimize animation effects. Padding 8-12px. Font sizes 12-14px for labels, 18-20px for headers.
+> - **Tablet (481px - 768px):** 2-column tactical layouts possible. Moderate accent line complexity. Animation remains subtle. Padding 12-16px. Accent line width 1-2px.
+> - **Desktop (1025px+):** Full tactical dashboard with multiple columns, complex HUD-like layouts. Accent lines 2-3px. Heavy animation and scan effects active. Padding 16-20px.
+>
+> **Grid & Layout:** Use CSS Grid for tactical layouts—allows complex arrangements that still reflow cleanly on mobile when converted to single-column.
+>
+> **Data Density:** On mobile, show only critical tactical data. On desktop, full information density with staggered readouts and status indicators.
+
+## [4. Animation & Motion]
+
+> **Scan Lines & Glyphs:** Subtle moving scan lines (1-2s cycle) add tactical vibe. Border/accent lines can have animated "charge" effect (color gradient sliding along line).
+>
+> **Status Pulse:** Active elements (buttons, alert states) can have pulsing glow in accent color. Use 1.5-2s cycle, low opacity pulse.
+>
+> **Transition Timing:**
+>
+> - Scan line animation: 2s infinite linear
+> - Status pulse: 1.5s infinite ease-in-out
+> - Hover effects: 150ms ease-out
+> - Data updates: 300ms cubic-bezier(0.34, 1.56, 0.64, 1)
+>
+> **Keyframe Example:**
+>
+> ```css
+> @keyframes tactical-charge {
+>   0% {
+>     background-position: 0 0;
+>   }
+>   100% {
+>     background-position: 100% 0;
+>   }
+> }
+> @keyframes tactical-pulse {
+>   0%,
+>   100% {
+>     box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+>   }
+>   50% {
+>     box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+>   }
+> }
+> ```
+>
+> **Performance:** Multiple simultaneous animations can strain mobile. Limit active animations to max 3-4 per viewport. Disable animation on very small screens.
+
+## [5. Concept & Context]
+
+> **Design Philosophy:** Tactical Cyber-Military merges military/tactical aesthetic with cybersecurity & combat game aesthetics—functional, information-dense, high-alert ready. Communicates authority, precision, security, and high-stakes focus.
+>
+> **Best Use Cases:**
+>
+> - Security/threat monitoring dashboards
+> - Military or defense tech websites
+> - Tactical/strategy gaming interfaces
+> - Cybersecurity company branding
+> - Special operations or emergency response portals
+> - Esports game interfaces or tournament platforms
+>
+> **When NOT to Use:**
+>
+> - Consumer products (too intimidating/aggressive)
+> - Wellness, hospitality, or lifestyle brands
+> - Accessibility-critical sites (high visual complexity)
+> - Elderly audiences (niche appeal, unfamiliar aesthetic)
+>
+> **Limitations:** High visual intensity—exhausting for extended use. Information density can overwhelm casual users. Niche appeal—not suitable for general-audience sites. Heavy animation can impact performance. Color palette is narrow (greens, yellows, reds)—limited brand flexibility.
+
 ## Quick Tips
 
 - All angles and cuts should be intentional and geometric—avoid accidental distortion

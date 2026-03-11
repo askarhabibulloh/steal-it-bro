@@ -32,6 +32,85 @@ Modern pixel art aesthetic with sharp corners, double-border techniques, retro p
 >
 > **Glow Effect:** Apply a subtle 'pixel-glow' (`box-shadow` without blur, just solid layers) to primary buttons to simulate neon lights.
 
+## [2. Accessibility]
+
+> **Color Contrast:** Pixel art palettes are often limited, making contrast challenging. Test background-text combinations with WCAG tools. Ensure primary text color has minimum 4.5:1 contrast. Avoid similar hues next to each other (e.g., cyan on light blue).
+>
+> **Focus States:** Pixel-art focus indicator should match aesthetic—use a pixelated border or simple outline shift (e.g., `outline: 2px solid`). Make it obvious and distinct from inactive state.
+>
+> **Size & Readability:** Pixel fonts can be small and hard to read. Ensure body text is at least 14-16px at desktop size, larger on mobile. Use sans-serif fallback for small text if pixel font becomes illegible.
+>
+> **Semantic HTML:** Use proper heading hierarchy. Buttons should be `<button>` elements. Form labels should be associated with inputs.
+>
+> **Text Alternatives:** Provide `alt` text for pixel art images. Decorative pixel patterns should not interfere with content using `z-index` or overlay opacity.
+
+## [3. Responsive Design]
+
+> **Breakpoints:**
+>
+> - **Mobile (320px - 480px):** Increase pixel size slightly for legibility. Stack layout vertically. Reduce animation frame rate or complexity (e.g., single-frame sprites instead of animated sequences). Padding 8-12px to preserve space.
+> - **Tablet (481px - 1024px):** Moderate pixel size. Allow 2-column grid layouts. Simple sprite animations at normal speed. Padding 12-16px.
+> - **Desktop (1025px+):** Full pixel detail visible. Multi-column layouts. Complex sprite animations and parallax effects active. Padding 16-20px.
+>
+> **Sprite Scaling:** Use `image-rendering: crisp-edges` or `image-rendering: pixelated` to maintain pixelated appearance when scaling. Avoid anti-aliasing that blurs pixels.
+>
+> **Typography Scaling:** Pixel fonts scale in jumps (8px, 16px, 24px) for authentic look. Use `line-height: 1.4` for tighter spacing typical of retro aesthetics.
+
+## [4. Animation & Motion]
+
+> **Sprite Animation:** Use sprite sheets with CSS `background-position` to cycle frames at fixed intervals (e.g., every 100-150ms per frame). Keep animation loops short (3-6 frames max).
+>
+> **Transition Timing:**
+>
+> - Sprite animation: 100-150ms steps() per frame
+> - Hover effects: instant or 1-2 frame-based steps
+> - Focus transitions: 150ms (or instant for authenticity)
+>
+> **Keyframe Example:**
+>
+> ```css
+> @keyframes pixel-walk {
+>   0% {
+>     background-position: 0 0;
+>   }
+>   25% {
+>     background-position: -32px 0;
+>   }
+>   50% {
+>     background-position: -64px 0;
+>   }
+>   75% {
+>     background-position: -96px 0;
+>   }
+>   100% {
+>     background-position: 0 0;
+>   }
+> }
+> ```
+>
+> **Motion Style:** Use `steps()` function for authentic pixel-perfect animation. Avoid easing—move in discrete jumps like old console games.
+
+## [5. Concept & Context]
+
+> **Design Philosophy:** High-Bit Pixel Art evokes retro video game & early computer aesthetics—celebrating low-resolution charm and digital nostalgia. It communicates indie authenticity, playfulness, and technical limitation-as-feature.
+>
+> **Best Use Cases:**
+>
+> - Indie games or game-adjacent web experiences
+> - Retro/throwback brand marketing
+> - Dev communities & hacker culture sites
+> - Educational platforms with nostalgic appeal
+> - Art galleries or creative portfolios emphasizing digital craft
+>
+> **When NOT to Use:**
+>
+> - Professional services (law, finance, healthcare)
+> - Luxury/premium brand positioning
+> - Content-heavy sites where pixel typography becomes unreadable
+> - Mobile-only audiences unfamiliar with retro aesthetics
+>
+> **Limitations:** Readability challenges with small viewport sizes. Colors are limited—may restrict brand flexibility. Can feel cheap or unpolished if executed poorly. Niche appeal—not universally liked. Performance concern: complex sprite sheets & animations can slow mobile devices.
+
 ## Quick Tips
 
 - Add a subtle scanline overlay using a repeating `linear-gradient` to mimic old CRT monitors, but keep it subtle for readability

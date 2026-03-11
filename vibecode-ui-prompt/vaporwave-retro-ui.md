@@ -36,6 +36,91 @@ Retro-futuristic vaporwave aesthetic with 3D perspective grids, film grain, Wind
 >
 > **Text Color:** Crisp white or neon cyan for a sharp contrast that pops out from the darkness.
 
+## [2. Accessibility]
+
+> **Pastel & Contrast:** Vaporwave's soft pastels (pinks, purples, cyans) can struggle with contrast. Test text colors with WCAG tools—pale text on pale background fails. Ensure text is dark enough (charcoal/navy on pastels) or use bold fonts.
+>
+> **Focus States:** Use higher-saturation version of accent color for focus indicator, or switch to contrasting color. Example: `focus-visible: 3px solid #FF1493` (bold) on pastel background.
+>
+> **Retro Semantics:** Despite nostalgic aesthetic, ensure semantic HTML structure (proper heading hierarchy, semantic tags like `<header>`, `<nav>`, `<article>`, `<section>`).
+>
+> **Animation Sensitivity:** Vaporwave often uses parallax, gradients, and smooth animations. Provide `@media (prefers-reduced-motion: reduce)` to disable parallax and heavy animations for motion-sensitive users.
+>
+> **Text & Gradient Readability:** Text over soft gradients can be hard to read. Use slight background opacity overlay (`rgba(255,255,255,0.1)`) behind text or add subtle text-shadow for legibility.
+
+## [3. Responsive Design]
+
+> **Breakpoints:**
+>
+> - **Mobile (320px - 480px):** Disable parallax effects (static backgrounds). Simplify gradient complexity. Stack layout vertically. Reduce animation intensity (slower frame updates). Padding 12-16px. Font sizes 14-16px.
+> - **Tablet (481px - 1024px):** Light parallax (5-10px offset). Soft gradients visible. 2-column layouts where appropriate. Padding 16-20px. Font sizes 16-18px.
+> - **Desktop (1025px+):** Full parallax effect (10-20px offset). Complex subtle gradients and layering. Multi-column layouts. Large, immersive typography. Padding 20-28px. Font sizes 18-24px.
+>
+> **Gradient Scaling:** Use CSS gradients that scale responsively (`radial-gradient` with percentages). Ensure gradients don't shift unexpectedly on viewport changes.
+>
+> **Image Scaling:** Retro imagery (VHS glitch, scan overlays) should scale gracefully. Use `background-size: cover` for full coverage. Test on small screens to ensure images don't become distorted.
+
+## [4. Animation & Motion]
+
+> **Parallax Scrolling:** Background layers move at different speeds on scroll (slower than foreground). Use `transform: translateY()` with `data-*` attributes or scroll event listeners. Offset range: 20-40px typical.
+>
+> **Subtle Glitch:** Vaporwave can incorporate slight glitch effects (RGB offset, scan line flicker). Keep effect minimal (1-2px offset, low opacity) and apply to specific elements, not entire page.
+>
+> **Transition Timing:**
+>
+> - Parallax scroll effect: continuous based on scroll
+> - Hover effects: 250-300ms ease-out
+> - Glitch/flicker: 100-200ms steps (if included)
+> - Fade transitions: 400-600ms ease-in-out
+>
+> **Keyframe Example:**
+>
+> ```css
+> @keyframes vaporwave-float {
+>   0%,
+>   100% {
+>     transform: translateY(0px);
+>   }
+>   50% {
+>     transform: translateY(-15px);
+>   }
+> }
+> @keyframes subtle-glitch {
+>   0%,
+>   100% {
+>     clip-path: inset(0);
+>   }
+>   20% {
+>     clip-path: inset(0 0 0 0);
+>     transform: translateX(-2px);
+>   }
+> }
+> ```
+>
+> **Easing:** Prefer smooth, dreamy curves—`ease-in-out`, `cubic-bezier()` with gentle motion. Avoid sharp transitions; everything should float/drift rather than snap.
+
+## [5. Concept & Context]
+
+> **Design Philosophy:** Vaporwave channels 1980s-90s aesthetics through digital abstraction—soft pastels, layered gradients, retro imagery (statues, palms, VHS), parallax depth. It communicates nostalgia, melancholy, contemplation, and digital escapism.
+>
+> **Best Use Cases:**
+>
+> - Experimental/art project websites
+> - Music (artists, producers, ambient listening platforms)
+> - Fashion/streetwear (retro-forward brands)
+> - Creative portfolios (designers, digital artists)
+> - Wellness/meditation apps (soft, dreamy aesthetic)
+>
+> **When NOT to Use:**
+>
+> - Professional/corporate services (too niche/artistic)
+> - High-performance sites (parallax & animations add overhead)
+> - Accessibility-critical applications
+> - International/global brands (trends are Western-centric)
+> - Mobile-performance sensitive projects
+>
+> **Limitations:** Parallax effects are performance-heavy on mobile—avoid on low-end devices. Soft pastel colors limit contrast. Can feel dated—trend value uncertain long-term. Very specific aesthetic—high barrier to entry for brands outside music/art sphere. Pastel colors may not align with corporate brand guidelines.
+
 ## Quick Tips
 
 - The 3D perspective grid background can be created with CSS Grid or SVG—ensure it doesn't impact performance
