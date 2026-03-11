@@ -1,0 +1,38 @@
+The Essentials (Core Glassmorphism Rules)
+"Create a modern web interface using a Glassmorphism design style. The UI must follow these core technical specifications:
+
+Glass Container: Use a semi-transparent background with backdrop-filter: blur(12px) to create a frosted glass effect.
+
+Border/Stroke: Apply a very thin (1px) subtle border to the glass cards to define the edges, using a low-opacity white or light color.
+
+Background Background: The page background must feature vibrant, colorful floating 3D shapes (spheres or organic blobs) and a mesh gradient to make the glass transparency visible and 'pop'.
+
+Shadows: Use soft, large-spread shadows to create a sense of depth and layered elevation.
+
+Components: All buttons and input fields should also inherit a subtle glass effect or a high-contrast solid color for clear CTA (Call to Action)."
+
+
+
+
+Option A: Light Mode (Bright & Airy)
+"[Light Mode Add-on]:
+
+Color Palette: Use a bright, pastel-colored mesh gradient for the background (e.g., soft pinks, light purples, and cyans).
+
+Glass Tint: The glass containers should have a white tint with low opacity, such as rgba(255, 255, 255, 0.2).
+
+Typography: Use dark, high-contrast text (dark navy or charcoal) for maximum readability against the bright background."
+
+
+
+
+
+
+Option B: Dark Mode (Deep & Cyberpunk)
+"[Dark Mode Add-on]:
+
+Color Palette: Use a deep, dark background (e.g., #0F172A or deep midnight blue) with high-saturation neon blobs (vibrant purple, electric blue, or orange) behind the glass.
+
+Glass Tint: The glass containers should have a subtle dark or neutral tint with very low opacity, such as rgba(255, 255, 255, 0.05).
+
+Typography: Use crisp white or light gray text. Use a vibrant accent color (like neon yellow or cyan) for active links or primary buttons."

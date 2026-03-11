@@ -1,0 +1,15 @@
+"Create a web landing page using a Neo-Brutalist UI style similar to Saweria.co. Follow these specific design constraints:
+
+Color Palette: Use an off-white or cream background (e.g., #FDFDFA). Use vibrant, flat primary colors for accents (like cyan #81E6D9 and orange #F6AD55).
+
+Borders: Every card, button, and input field must have a thick, solid black border (2px or 3px).
+
+Shadows: Use 'Hard Shadows' instead of soft/blurred ones. The shadow should be a solid black offset (e.g., 4px 4px 0px 0px #000).
+
+Buttons: Buttons should have a hover effect where the button moves slightly or the shadow increases. Use bold, black text inside.
+
+Typography: Use a clean, bold sans-serif font. Headers should be large and prominent.
+
+Layout: Keep it clean, centered, and playful with enough white space.
+
+Technology: Use [React/Next.js/HTML] with Tailwind CSS."
