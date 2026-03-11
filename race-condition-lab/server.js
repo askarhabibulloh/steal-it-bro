@@ -16,8 +16,10 @@ const users = {}; // { username: { password, balance, createdAt } }
 const sessions = {}; // { sessionId: { username, createdAt } }
 
 function generateSessionId() {
-  return Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }
 
 function verifySession(req) {
@@ -189,7 +191,9 @@ app.post("/api/transfer", async (req, res) => {
 
     // TOCTOU Vulnerability: Intentional delay widens the race window
     await sleep(2000);
-    console.log(`[TRANSFER] ${username} - After sleep: current balance=${db.balance}`);
+    console.log(
+      `[TRANSFER] ${username} - After sleep: current balance=${db.balance}`,
+    );
 
     // Update phase - another thread may have modified balance during sleep!
     db.balance = db.balance - amount;
@@ -235,7 +239,9 @@ app.post("/api/coupon", async (req, res) => {
 
     // TOCTOU Vulnerability: Intentional delay widens the race window
     await sleep(2000);
-    console.log(`[COUPON] ${username} - After sleep: coupon.used=${db.coupons[0].used}`);
+    console.log(
+      `[COUPON] ${username} - After sleep: coupon.used=${db.coupons[0].used}`,
+    );
 
     // Update phase - another thread may have marked coupon as used during sleep!
     db.coupons[0].used = true;
@@ -293,7 +299,9 @@ app.post("/api/checkout", async (req, res) => {
 
     // TOCTOU Vulnerability: Intentional delay widens the race window
     await sleep(2000);
-    console.log(`[CHECKOUT] ${username} - After sleep: current stock=${db.stock}`);
+    console.log(
+      `[CHECKOUT] ${username} - After sleep: current stock=${db.stock}`,
+    );
 
     // Update phase - another thread may have modified stock during sleep!
     // Note: Still allows going negative (vulnerability!)
@@ -359,9 +367,7 @@ app.post("/api/reset", (req, res) => {
   });
 });
 
-// ============================================================================
 // Health Check
-// ============================================================================
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Race Condition Lab is running" });
 });
@@ -374,26 +380,32 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════════════════════════╗
-║       Race Condition Vulnerability Lab - RUNNING              ║
+║     Race Condition Vulnerability Lab - RUNNING (With Auth)    ║
 ╠════════════════════════════════════════════════════════════════╣
 ║                                                                ║
 ║  Server: http://localhost:${PORT}                             ║
 ║  Dashboard: http://localhost:${PORT}/                          ║
 ║                                                                ║
-║  Vulnerable Endpoints:                                         ║
+║  Auth Endpoints:                                               ║
+║  - POST /api/auth/signup (Register new user)                 ║
+║  - POST /api/auth/login (Login to account)                   ║
+║  - POST /api/auth/logout (Logout)                            ║
+║  - GET /api/auth/me (Get current user)                       ║
+║                                                                ║
+║  Vulnerable Endpoints (SHARED global state):                  ║
 ║  - POST /api/transfer (Balance race condition)                ║
 ║  - POST /api/coupon (Single-use coupon race condition)        ║
 ║  - POST /api/checkout (Stock race condition)                  ║
-║  - GET /api/status (View current state)                       ║
-║  - POST /api/reset (Reset lab state)                          ║
+║  - GET /api/status (View current shared state)                ║
+║  - POST /api/reset (Reset shared state)                       ║
 ║                                                                ║
-║  Initial State:                                                ║
+║  Initial Shared State:                                         ║
 ║  - Balance: $${db.balance}                                          ║
 ║  - Coupon: ${db.coupons[0].code} (Used: ${db.coupons[0].used})          ║
 ║  - Stock: ${db.stock} units                                        ║
 ║                                                                ║
-║  Education Purpose: Demonstrates TOCTOU vulnerabilities       ║
-║  with intentional 2-second delays between check & update      ║
+║  NOTE: All users share the same global state (balance,        ║
+║  coupon, stock). This makes race conditions realistic!        ║
 ║                                                                ║
 ╚════════════════════════════════════════════════════════════════╝
   `);
