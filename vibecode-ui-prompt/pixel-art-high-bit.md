@@ -1,0 +1,41 @@
+# Pixel Art High-Bit
+
+Modern pixel art aesthetic with sharp corners, double-border techniques, retro pixel-style fonts, and gameboy/arcade vibes.
+
+## [1. The Essentials]
+
+> Build a web interface with a Modern High-Bit Pixel Art aesthetic. The UI must strictly follow these rules:
+>
+> **Pixel Alignment:** All elements (containers, buttons, inputs) must have sharp, non-rounded corners. Use a 'stepped' corner effect if possible (simulated pixelated curves).
+>
+> **Borders:** Use thick, solid borders (at least 3px or 4px). Use a 'double-border' technique (an outer dark border and an inner highlight border) to give a 3D chunky feel.
+>
+> **Typography:** Use a high-quality pixel-style font like 'Press Start 2P', 'Silkscreen', or 'VT323' from Google Fonts. Headings should be all-caps.
+>
+> **Anti-Aliasing:** Ensure all images and icons have the CSS property `image-rendering: pixelated` to keep them crisp.
+>
+> **Interactive Elements:** Buttons should have a 'pressed' animation effect where the element moves down 4px and the shadow disappears when clicked.
+
+## [Option A: Light Mode]
+
+> **Color Palette:** Use a warm cream background (`#F4F4E4`). For primary accents, use 'Forest Green' (`#3E8948`) and 'Terracotta Red' (`#E0503E`).
+>
+> **Styling:** Elements should look like a classic RPG menu. Use a light parchment color for card backgrounds.
+>
+> **Shadows:** Use solid, non-transparent block shadows in a darker shade of the background color (not black).
+
+## [Option B: Dark Mode]
+
+> **Color Palette:** Use a deep midnight purple or navy background (`#1A1A2E`). For accents, use neon 'Cyber Cyan' (`#00F5FF`) and 'Electric Magenta' (`#FF00E5`).
+>
+> **Styling:** Elements should look like a retro arcade machine or a cyberpunk terminal. Use high-contrast border colors that 'pop' against the dark background.
+>
+> **Glow Effect:** Apply a subtle 'pixel-glow' (`box-shadow` without blur, just solid layers) to primary buttons to simulate neon lights.
+
+## Quick Tips
+
+- Add a subtle scanline overlay using a repeating `linear-gradient` to mimic old CRT monitors, but keep it subtle for readability
+- The double-border technique creates visual depth without complex shadows
+- Perfect for gaming peripherals, retro apps, and nostalgic game-inspired interfaces
+- The pressed animation on buttons provides satisfying mechanical feedback
+- Pixel fonts must be large enough to be readable; minimum 14px for body text

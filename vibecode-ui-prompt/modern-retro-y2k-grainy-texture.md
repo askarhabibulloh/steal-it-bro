@@ -1,0 +1,41 @@
+# Modern Retro Y2K Grainy Texture
+
+Lo-fi Y2K aesthetic combining grain textures, bold typography, sticker-like geometric shapes with black borders, and vintage analog vibes.
+
+## [1. The Essentials]
+
+> Create a web interface with a Modern Retro Y2K aesthetic combined with a Grainy/Lo-fi texture. The UI must follow these specifications:
+>
+> **Texture:** Apply a subtle noise/grain overlay across the entire background to give it a 'printed paper' or 'vintage analog' feel.
+>
+> **Typography:** Use a mix of bold, wide display fonts for headings and a clean, monospace or sans-serif font for body text.
+>
+> **Shapes & Borders:** Use geometric shapes like starbursts, stickers, and rounded rectangles. Every element should have a solid 2px black border (similar to a comic book or sticker style).
+>
+> **Patterns:** Incorporate subtle grid patterns or dot-matrix backgrounds in certain sections to emphasize the early-digital era look.
+>
+> **Effects:** Use 'Hard Shadows' (no blur) and occasional chromatic aberration or subtle glow effects on interactive elements.
+
+## [Option A: Light Mode]
+
+> **Color Palette:** Use a warm 'Off-white' or 'Cream' (`#F4F1EA`) as the primary background to mimic aged paper.
+>
+> **Accent Colors:** Use high-saturation 'Pop Art' colors: Bubblegum Pink, Lime Green, and Tangerine Orange.
+>
+> **Styling:** Buttons should look like physical stickers with a slight 'lift' effect. Use colorful borders instead of just black for secondary elements.
+
+## [Option B: Dark Mode]
+
+> **Color Palette:** Use a deep, grainy charcoal or midnight navy (`#121212`) as the base.
+>
+> **Accent Colors:** Use 'Electric' neon colors: Cyan, Neon Purple, and Acid Yellow.
+>
+> **Styling:** Incorporate 'Glow' effects (`box-shadow` with blur) on the accent colors to make them look like old CRT monitors or neon signs. Use semi-transparent dark overlays for cards.
+
+## Quick Tips
+
+- Grain texture should be subtle enough not to impact readability or performance
+- The sticker aesthetic works well for craft, DIY, and lifestyle brands
+- Hard shadows (using `filter: drop-shadow()` or solid offset shadows) enhance the analog feel
+- Mix digital and analog inspiration—use pixel fonts alongside organic shapes
+- Perfect for blogs, creative portfolios, and personal websites with nostalgic branding

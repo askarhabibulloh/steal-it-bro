@@ -5,8 +5,8 @@ Koleksi prompt desain UI yang siap pakai untuk AI code agents. Gunakan style ini
 ## Cara Cepat
 
 1. **Pilih style** dari daftar di bawah
-2. **Buka file** `.txt` yang sesuai
-3. **Copy bagian "[1. The Essentials]"** (dan "[3. Option A/B]" jika ingin varian Light/Dark)
+2. **Buka file** `.md` yang sesuai
+3. **Copy bagian "[1. The Essentials]"** (dan "[Option A/B]" jika ingin varian Light/Dark)
 4. **Paste ke AI agent Anda** beserta requirement UI Anda
 
 Contoh instruksi:
@@ -34,13 +34,13 @@ Contoh instruksi:
 **Dashboard Stats (Cyberpunk)**
 
 ```
-"Build a 'Character Stats' dashboard. Use the [1. The Essentials] rules and combine with [3. Option B: Dark Mode] from Cyber-Tech Noir HUD. Make numbers glow neon green."
+"Build a 'Character Stats' dashboard. Use the [1. The Essentials] rules and combine with [Option B: Dark Mode] from Cyber-Tech Noir HUD. Make numbers glow neon green."
 ```
 
 **Landing Page (Modern)**
 
 ```
-"Create a product landing page. Use Neo-Brutalism style: [1. The Essentials] plus [3. Option A: Light Mode] for a clean, bold look."
+"Create a product landing page. Use Neo-Brutalism style: [1. The Essentials] plus [Option A: Light Mode] for a clean, bold look."
 ```
 
 **Portfolio Website (Retro)**
@@ -52,12 +52,12 @@ Contoh instruksi:
 **E-commerce Cards (Glass Effect)**
 
 ```
-"Design product listing cards. Use Glassmorphism [1. The Essentials] with [3. Option B: Dark Mode] for a premium, modern feel."
+"Design product listing cards. Use Glassmorphism [1. The Essentials] with [Option B: Dark Mode] for a premium, modern feel."
 ```
 
 ## Tips
 
-- Setiap file `.txt` punya **[1. The Essentials]** (aturan inti) dan **[3. Option A/B]** (varian Light/Dark)
+- Setiap file `.md` punya **[1. The Essentials]** (aturan inti) dan **[Option A/B]** (varian Light/Dark)
 - Combine multiple styles untuk mix aesthetic yang unik
 - Paste prompt + file content ke AI agent untuk hasil maksimal
 - Test di browser untuk melihat efek visualnya

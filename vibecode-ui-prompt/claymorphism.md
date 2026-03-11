@@ -1,0 +1,46 @@
+# Claymorphism
+
+Soft, inflated 3D design with layered shadows creating depth, volume, and a playful squishy appearance.
+
+## [1. The Essentials]
+
+> Create a web interface using a Claymorphism design style. The UI must feel 'inflated', soft, and 3D. Follow these core technical specifications:
+>
+> **Shapes:** Use very large corner radiuses (e.g., 32px to 48px) to give all cards and buttons a rounded, organic, and 'puffy' look.
+>
+> **The 3D Effect (Crucial):** Every element must have a combination of shadows to create volume:
+>
+> - **Inner Shadow 1 (Top-Left):** A light/white highlight to simulate a light source hitting the top of the object.
+> - **Inner Shadow 2 (Bottom-Right):** A darker, subtle shadow to create depth inside the shape.
+> - **Outer Shadow:** A soft, large-spread drop shadow to make the element appear floating above the background.
+>
+> **Typography:** Use a rounded, bold, and friendly sans-serif font (e.g., 'Quicksand', 'Fredoka', or 'Nunito').
+>
+> **Interactions:** Buttons should feel 'squishy'—when hovered or clicked, they should slightly scale down or change shadow depth.
+
+## [Option A: Light Mode]
+
+> **Color Palette:** Use soft pastel background colors (e.g., Sky Blue `#E0F2FE`, Mint `#F0FDF4`, or Lavender `#F5F3FF`).
+>
+> **Element Colors:** Main cards should be white or very light pastel, while primary buttons use vibrant but soft colors (e.g., Soft Pink or Cyan).
+>
+> **Shadow Details:** Use white for top-left inner shadows and a slightly darker version of the element's color for the bottom-right inner shadow.
+>
+> **Text Color:** Use high-contrast dark gray or deep navy for readability.
+
+## [Option B: Dark Mode]
+
+> **Color Palette:** Use a deep, saturated dark background (e.g., Dark Indigo `#1E1B4B` or Deep Charcoal `#121212`).
+>
+> **Element Colors:** Use slightly lighter shades of the background for cards. For primary actions, use 'Neon-Clay' colors (like electric purple or bright salmon).
+>
+> **Shadow Details:** Use a subtle light-gray/white (low opacity) for the top-left inner highlight to maintain the 3D effect in the dark. Use black for the bottom-right inner shadow.
+>
+> **Text Color:** Use crisp white or light silver text.
+
+## Quick Tips
+
+- The shadow layering is critical—test on various element sizes
+- Works beautifully for playful apps, creative portfolios, and kid-friendly interfaces
+- Maintain consistency in shadow offset distances across all elements
+- The squishy interaction enhances user delight and engagement
