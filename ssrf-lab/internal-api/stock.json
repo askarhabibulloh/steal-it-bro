@@ -1,18 +1,22 @@
 [
   {
     "location": "london",
-    "status": "In Stock"
+    "status": "In Stock",
+    "quantity": 45
   },
   {
     "location": "paris",
-    "status": "Out of Stock"
+    "status": "Out of Stock",
+    "quantity": 0
   },
   {
     "location": "berlin",
-    "status": "In Stock"
+    "status": "In Stock",
+    "quantity": 12
   },
   {
     "location": "tokyo",
-    "status": "Out of Stock"
+    "status": "Out of Stock",
+    "quantity": 0
   }
 ]
