@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Condition Vulnerability Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="min-h-screen py-8 px-4">
+      <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-4xl font-bold text-gray-800 mb-2">
+            🔐 Race Condition Vulnerability Lab
+          </h1>
+          <p class="text-gray-600">
+            Educational demonstration of TOCTOU (Time-of-Check to Time-of-Use)
+            vulnerabilities
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- State Display Panel -->
+          <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                📊 Current State
+              </h2>
+
+              <!-- Balance Card -->
+              <div
+                class="bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-500 p-4 mb-4 rounded"
+              >
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-gray-600 text-sm font-semibold">BALANCE</p>
+                    <p
+                      id="balance-display"
+                      class="text-3xl font-bold text-blue-600"
+                    >
+                      $1,000.00
+                    </p>
+                  </div>
+                  <div class="text-blue-500 text-4xl">💰</div>
+                </div>
+              </div>
+
+              <!-- Coupon Card -->
+              <div
+                class="bg-gradient-to-r from-purple-50 to-purple-100 border-l-4 border-purple-500 p-4 mb-4 rounded"
+              >
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-gray-600 text-sm font-semibold">
+                      COUPON (DISKON100)
+                    </p>
+                    <p
+                      id="coupon-display"
+                      class="text-3xl font-bold text-purple-600"
+                    >
+                      NOT USED
+                    </p>
+                  </div>
+                  <div class="text-purple-500 text-4xl">🎟️</div>
+                </div>
+              </div>
+
+              <!-- Stock Card -->
+              <div
+                class="bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500 p-4 rounded"
+              >
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-gray-600 text-sm font-semibold">STOCK</p>
+                    <p
+                      id="stock-display"
+                      class="text-3xl font-bold text-green-600"
+                    >
+                      5 units
+                    </p>
+                  </div>
+                  <div class="text-green-500 text-4xl">📦</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control Panel -->
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+              ⚙️ Lab Controls
+            </h2>
+
+            <button
+              onclick="resetLab()"
+              class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg mb-4 transition duration-200 transform hover:scale-105 text-lg"
+            >
+              🔴 RESET LAB
+            </button>
+
+            <div class="border-t border-gray-300 pt-4">
+              <p class="text-xs text-gray-500 mb-3 italic">
+                Status:
+                <span
+                  id="auto-refresh-status"
+                  class="text-green-600 font-semibold"
+                  >Auto-refreshing...</span
+                >
+              </p>
+              <p class="text-xs text-gray-500 text-center">
+                Last update: <span id="last-update" class="font-mono">-</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <!-- Transfer -->
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">
+              💸 Transfer Money
+            </h3>
+            <p class="text-gray-600 text-sm mb-4">
+              Test balance vulnerability. Race condition allows multiple
+              transfers exceeding balance.
+            </p>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2"
+                >Amount ($)</label
+              >
+              <input
+                type="number"
+                id="transfer-amount"
+                placeholder="1000"
+                value="500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <button
+              onclick="performTransfer()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            >
+              Send Transfer
+            </button>
+          </div>
+
+          <!-- Coupon -->
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">🎟️ Use Coupon</h3>
+            <p class="text-gray-600 text-sm mb-4">
+              Test coupon vulnerability. Race condition allows coupon to be used
+              multiple times.
+            </p>
+
+            <div class="mb-4">
+              <p class="text-gray-700 text-sm font-semibold">
+                Coupon: <span class="text-purple-600">DISKON100</span>
+              </p>
+              <p class="text-gray-600 text-sm">Discount: 20% off balance</p>
+            </div>
+
+            <button
+              onclick="useCoupon()"
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            >
+              Claim Coupon
+            </button>
+          </div>
+
+          <!-- Checkout -->
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">📦 Checkout</h3>
+            <p class="text-gray-600 text-sm mb-4">
+              Test stock vulnerability. Race condition allows selling more than
+              available stock.
+            </p>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2"
+                >Quantity</label
+              >
+              <input
+                type="number"
+                id="checkout-quantity"
+                placeholder="1"
+                value="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+              />
+            </div>
+
+            <button
+              onclick="performCheckout()"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            >
+              Checkout
+            </button>
+          </div>
+        </div>
+
+        <!-- Log Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">📝 Response Log</h2>
+          <div
+            id="log-container"
+            class="bg-gray-900 text-gray-100 p-4 rounded font-mono text-sm max-h-96 overflow-y-auto"
+          >
+            <div class="text-gray-500">
+              > Lab initialized. Waiting for requests...
+            </div>
+          </div>
+          <button
+            onclick="clearLog()"
+            class="mt-3 text-sm text-gray-600 hover:text-gray-800 underline"
+          >
+            Clear Log
+          </button>
+        </div>
+
+        <!-- Info Section -->
+        <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded">
+          <h3 class="font-bold text-yellow-800 mb-2">⚠️ About This Lab</h3>
+          <p class="text-yellow-700 text-sm mb-3">
+            This lab demonstrates
+            <strong
+              >TOCTOU (Time-of-Check to Time-of-Use) vulnerabilities</strong
+            >. Each endpoint intentionally introduces a 2-second delay between
+            checking a condition and updating state. This simulates race
+            conditions where multiple concurrent requests can exploit the window
+            between decision and action.
+          </p>
+          <p class="text-yellow-700 text-sm mb-3">
+            <strong>Vulnerability Examples:</strong>
+          </p>
+          <ul class="text-yellow-700 text-sm list-disc list-inside space-y-1">
+            <li>
+              Transfer: Multiple threads can transfer more money than available
+              balance
+            </li>
+            <li>Coupon: Multiple threads can use the same single-use coupon</li>
+            <li>
+              Checkout: Stock can go negative by selling more than available
+            </li>
+          </ul>
+          <p class="text-yellow-700 text-sm mt-3">
+            Use concurrent request tools (Python, Node.js, or curl scripts) to
+            exploit these vulnerabilities!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:3000";
+
+      // Auto-refresh state every 500ms
+      function updateStateDisplay() {
+        fetch(`${API_BASE}/api/status`)
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById("balance-display").textContent =
+              `$${data.balance.toFixed(2)}`;
+            document.getElementById("coupon-display").textContent = data
+              .coupons[0].used
+              ? "✅ USED"
+              : "❌ NOT USED";
+            document.getElementById("stock-display").textContent =
+              `${data.stock} units`;
+            document.getElementById("last-update").textContent = new Date(
+              data.timestamp,
+            ).toLocaleTimeString();
+          })
+          .catch((err) => {
+            document.getElementById("auto-refresh-status").textContent =
+              "Connection lost";
+            document.getElementById("auto-refresh-status").className =
+              "text-red-600 font-semibold";
+          });
+      }
+
+      // Update state on page load and every 500ms
+      updateStateDisplay();
+      setInterval(updateStateDisplay, 500);
+
+      // Logging helper
+      function addLog(message, type = "info") {
+        const container = document.getElementById("log-container");
+        const timestamp = new Date().toLocaleTimeString();
+        const color =
+          type === "error"
+            ? "text-red-400"
+            : type === "success"
+              ? "text-green-400"
+              : "text-gray-300";
+        const logEntry = document.createElement("div");
+        logEntry.className = color;
+        logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${escapeHtml(message)}`;
+        container.appendChild(logEntry);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function clearLog() {
+        const container = document.getElementById("log-container");
+        container.innerHTML = '<div class="text-gray-500">> Log cleared</div>';
+      }
+
+      // Transfer
+      async function performTransfer() {
+        const amount = parseFloat(
+          document.getElementById("transfer-amount").value,
+        );
+
+        if (isNaN(amount) || amount <= 0) {
+          addLog("❌ Invalid amount", "error");
+          return;
+        }
+
+        addLog(`📤 Sending transfer request: $${amount}...`, "info");
+
+        try {
+          const res = await fetch(`${API_BASE}/api/transfer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount }),
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            addLog(
+              `✅ ${data.message} → New balance: $${data.newBalance.toFixed(2)}`,
+              "success",
+            );
+          } else {
+            addLog(`❌ ${data.message}`, "error");
+          }
+        } catch (err) {
+          addLog(`❌ Error: ${err.message}`, "error");
+        }
+      }
+
+      // Coupon
+      async function useCoupon() {
+        addLog(`🎟️ Claiming coupon DISKON100...`, "info");
+
+        try {
+          const res = await fetch(`${API_BASE}/api/coupon`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            addLog(
+              `✅ ${data.message} Discount: $${data.discountAmount} → New balance: $${data.newBalance}`,
+              "success",
+            );
+          } else {
+            addLog(`❌ ${data.message}`, "error");
+          }
+        } catch (err) {
+          addLog(`❌ Error: ${err.message}`, "error");
+        }
+      }
+
+      // Checkout
+      async function performCheckout() {
+        const quantity = parseInt(
+          document.getElementById("checkout-quantity").value,
+        );
+
+        if (isNaN(quantity) || quantity <= 0) {
+          addLog("❌ Invalid quantity", "error");
+          return;
+        }
+
+        addLog(`📦 Processing checkout: ${quantity} unit(s)...`, "info");
+
+        try {
+          const res = await fetch(`${API_BASE}/api/checkout`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity }),
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            addLog(
+              `✅ ${data.message} Total: $${data.totalPrice} → New stock: ${data.newStock} units`,
+              "success",
+            );
+          } else {
+            addLog(`❌ ${data.message}`, "error");
+          }
+        } catch (err) {
+          addLog(`❌ Error: ${err.message}`, "error");
+        }
+      }
+
+      // Reset
+      async function resetLab() {
+        if (
+          !confirm(
+            "Are you sure you want to reset the lab? All state changes will be lost.",
+          )
+        ) {
+          return;
+        }
+
+        addLog(`🔄 Resetting lab...`, "info");
+
+        try {
+          const res = await fetch(`${API_BASE}/api/reset`, { method: "POST" });
+          const data = await res.json();
+
+          if (data.success) {
+            addLog(`✅ ${data.message}`, "success");
+            updateStateDisplay();
+          } else {
+            addLog(`❌ Reset failed`, "error");
+          }
+        } catch (err) {
+          addLog(`❌ Error: ${err.message}`, "error");
+        }
+      }
+    </script>
+  </body>
+</html>
