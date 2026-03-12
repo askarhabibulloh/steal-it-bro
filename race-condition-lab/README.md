@@ -1,670 +1,418 @@
-# 🔐 Laboratorium Kerentanan Race Condition
+# 🏁 Race Condition Lab
 
-Sebuah laboratorium pendidikan Node.js/Express yang mendemonstrasikan kerentanan **TOCTOU (Time-of-Check to Time-of-Use)** race condition dengan delay yang disengaja, database dalam memori, dan sistem autentikasi multi-pengguna. Dirancang dengan antarmuka **Neo-Brutalist** untuk pengalaman visual yang unik dan edukatif.
+Laboratorium pendidikan untuk memahami dan mengeksploitasi **race condition vulnerabilities** dalam aplikasi web dengan sistem autentikasi multi-user. Dibangun dengan Node.js/Express dan antarmuka **Neo-Brutalist** yang modern.
 
-## 📚 Tujuan Pembelajaran
+## 🎯 Tujuan Pembelajaran
 
-Laboratorium ini mengajarkan:
+- Memahami **TOCTOU (Time-of-Check to Time-of-Use)** vulnerabilities
+- Mengenal pola **check-then-act** yang rentan race condition
+- Mempelajari dampak race condition dalam sistem **multi-user**
+- Menguji exploit dengan berbagai metode (dashboard, scripts)
+- Mempelajari cara memperbaiki kerentanan ini
 
-- **Race Conditions**: Memahami bagaimana request yang bersamaan dapat saling mengganggu
-- **Kerentanan TOCTOU**: Celah antara memeriksa suatu kondisi dan bertindak berdasarkannya
-- **Implikasi Keamanan**: Bagaimana pola yang tidak aman dapat dieksploitasi dalam sistem dunia nyata
-- **Skenario Multi-Pengguna**: Bagaimana beberapa pengguna yang terautentikasi bersaing untuk sumber daya bersama
-- **Pengujian Bersamaan**: Menggunakan Python, Node.js, dan Bash untuk menguji sistem yang rentan
-- **Strategi Perbaikan**: Mengapa operasi atomic, transaksi database, dan kunci sangat penting
+## ✨ Fitur Terbaru
 
-## 🎯 Skenario Kerentanan
+### 🎨 Neo-Brutalist UI
 
-### 1. Transfer Saldo (Double-Spending) - Skenario Multi-Pengguna
+- Desain bold dengan border tebal dan hard shadows
+- Layout desktop-optimized (1200px container)
+- Responsive design dengan breakpoints yang tepat
+- Real-time log dengan warna kode
 
-- **Kerentanan**: Multiple transfer bersamaan dari pengguna yang berbeda melebihi saldo bersama yang tersedia
-- **Cara Kerjanya**:
-  1. Pengguna A (terautentikasi) memeriksa apakah balance >= amount
-  2. Pengguna B (terautentikasi) memeriksa apakah balance >= amount (check berhasil juga)
-  3. Tidur 2 detik (jendela race)
-  4. Kedua pengguna mengurangi amount dari balance bersama
-- **Eksploitasi**: Dua transfer bersamaan sebesar $800 dapat berhasil meskipun saldo bersama hanya $1000
-- **Scenario Nyata**: Dua pengguna di toko online yang sama menjual barang dari stok terbatas
+### 🔐 Sistem Autentikasi Lengkap
 
-### 2. Penggunaan Kupon (Bypass Single-Use) - Skenario Multi-Pengguna
+- Signup, Login, Logout dengan session management
+- Per-user balance (setiap user punya saldo sendiri)
+- Session-based authentication dengan header `x-session-id`
 
-- **Kerentanan**: Kupon single-use dapat digunakan berkali-kali oleh pengguna berbeda
-- **Cara Kerjanya**:
-  1. Pengguna A (terautentikasi) memeriksa apakah coupon.used === false
-  2. Pengguna B (terautentikasi) memeriksa apakah coupon.used === false (check berhasil juga)
-  3. Tidur 2 detik (jendela race)
-  4. Kedua pengguna menerapkan diskon dan menandai kupon sebagai digunakan
-- **Eksploitasi**: Dua request bersamaan dapat sama-sama menerapkan diskon 20% dari kupon yang sama
-- **Scenario Nyata**: Promosi terbatas yang dapat dimanfaatkan oleh pelanggan berbeda secara simultan
+### 🏪 E-commerce Simulation
 
-### 3. Penipisan Stok (Overselling) - Skenario Multi-Pengguna
+- **Transfer**: Kirim uang ke user lain
+- **Checkout**: Beli produk HP ($50) atau Laptop ($100)
+- **Coupon DISKON100**: Dapatkan checkout gratis
+- **Shared Stock**: Stok HP dan Laptop dibagi semua user
+- **Items Shipped**: Track total item yang sudah dibeli
 
-- **Kerentanan**: Stok dapat menjadi negatif dengan penjualan yang bersamaan dari pengguna berbeda
-- **Cara Kerjanya**:
-  1. Pengguna A (terautentikasi) memeriksa apakah stock > 0
-     2.�️ Antarmuka Neo-Brutalist
+### ⚠️ Vulnerable Endpoints
 
-Laboratorium ini menampilkan desain **Neo-Brutalist** yang terinspirasi dari platform seperti Saweria.co dengan:
+- **POST `/api/transfer`**: Race condition pada per-user balance
+- **POST `/api/checkout`**: Race condition pada shared stock dan coupon count
+- **Intentional delay**: 2 detik untuk memperlebar race window
 
-- **Palet Warna**: Cream (#FDFDFA), Cyan (#81E6D9), Orange (#F6AD55), dan Black (#000)
-- **Tipografi Bold**: Uppercase labels dengan letter-spacing untuk visual yang kuat
-- **Border Tebal**: 2-3px solid black pada semua elemen interaktif
-- **Hard Shadows**: Bayangan offset 4px tanpa blur untuk efek 3D yang tajam
-- **Interaksi Visual**: Hover dengan translate dan active states yang responsif
+## 🚀 Quick Start
 
-### Layar Autentikasi
-
-Tampilan pertama adalah layar login/signup dengan:
-
-- Tab navigation untuk beralih antara Login dan Signup
-- Form input untuk username dan password
-- Hint akun demo untuk pengujian cepat
-
-### Layar Dashboard
-
-Setelah login, akses dashboard dengan:
-
-- **Header**: Username saat ini dan tombol Logout
-- **Status Grid**: Menampilkan saldo bersama, status kupon, dan stok dalam real-time
-- **Actions Grid**: Tombol untuk Transfer, Claim Coupon, dan Checkout dengan input fields
-- **Log Container**: Menampilkan respons dari setiap aksi dengan warna-kode (hijau=sukses, oranye=error)
-- **Auto-refresh**: Status diperbarui setiap 500ms untuk menampilkan perubahan real-time
-- **Reset Button**: Mengembalikan lab ke status awal
-
-## 🚀 Memulai Dengan Cepat
-
-### Prasyarat
+### Prerequisites
 
 - Node.js 14+ dan npm
-- Python 3.6+ (untuk skrip exploit Python)
-- Bash dan curl (untuk skrip exploit Bash)
 - Browser modern (Chrome, Firefox, Safari, Edge)
 
-### Pengaturan
-
-````bash
-# Navigasi ke direktori lab
-cd /path/to/race-condition-lab
-
-# Instal dependensi
-npm Strategi 1: Menggunakan Dashboard Frontend (Rekomendasi untuk Pemula)
-
-1. **Login** dengan akun Anda atau buat akun baru
-2. **Buka 2-3 tab browser** dengan URL yang sama
-3. **Login di setiap tab** dengan akun yang berbeda (atau akun yang sama jika ingin test lebih extreme)
-4. **Koordinasi aksi**: Klik tombol Transfer (atau Coupon/Checkout) secara bersamaan di beberapa tab
-5. **Amati hasilnya**: Lihat bagaimana saldo bisa menjadi negatif atau kupon bisa dipakai berkali-kali
-6. **Reset Lab**: Klik tombol "RESET LAB" untuk memulai ulang
-
-**Contoh Pengujian Transfer**:
-- Tab 1 (User A): Masukkan 800 dan klik "TRANSFER"
-- Tab 2 (User B): Masukkan 800 dan klik "TRANSFER" (waktu klik hampir bersamaan)
-- **Hasil**: Kedua transfer berhasil meskipun saldo total hanya 1000!
-
-### Strategi 2: Menggunakan Skrip Exploit Python
+### Installation
 
 ```bash
-# Instal dependensi (jika belum)
-pip install requests
+# Clone repository (jika belum)
+# cd ke direktori lab
 
-# Daftar/Login terlebih dahulu untuk mendapatkan sessionId
-curl -X POST http://localhost:3000/api/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpass"}'
+# Install dependencies
+npm install
 
-# Response akan berisi sessionId. Copy dan gunakan di command berikut:
-
-# Eksploitasi transfer dengan 5 request bersamaan
-python3 exploit-race.py --endpoint transfer --threads 5 --session YOUR_SESSION_ID
-
-# Eksploitasi kupon dengan 10 request bersamaan
-python3 exploit-race.py --endpoint coupon --threads 10 --session YOUR_SESSION_ID
-
-# Eksploitasi checkout dengan kuantitas custom
-python3 exploit-race.py --endpoint checkout --threads 3 --quantity 5 --session YOUR_SESSION_ID
-````
-
-**Hasil yang Diharapkan**:
-
-- **Transfer**: Saldo menjadi negatif ❌ (semua transfer berhasil meskipun exceeds balance)
-- **Kupon**: Diskon diterapkan berkali-kali ❌ (semua request melihat kupon sebagai belum digunakan)
-- **Checkout**: Stok menjadi negatif ❌ (semua request melihat stok > 0)
-
-### Strategi 3: Menggunakan Skrip Exploit Node.js
-
-_Catatan: Jalankan terlebih dahulu `npm install node-fetch@2` jika belum terinstal_
-
-```bash
-# Daftar dan dapatkan sessionId
-curl -X POST http://localhost:3000/api/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser2", "password": "testpass2"}'
-
-# Eksploitasi dengan sessionId
-node exploit-race.js --endpoint transfer --threads 5 --session YOUR_SESSION_ID
-
-node exploit-race.js --endpoint coupon --threads 10 --session YOUR_SESSION_ID
-
-node exploit-race.js --endpoint checkout --threads 3 --quantity 5 --session YOUR_SESSION_ID
+# Start server
+node server.js
 ```
 
-### Strategi 4: Menggunakan Skrip Exploit Bash/Curl
+Server akan berjalan di `http://localhost:3000`
 
-````bash
-# Buat skrip dapat dijalankan
-chmod +x exploit-race.sh
+## 🖥️ Menggunakan Dashboard
 
-# Daftar dan dapatkan sessionId
-curl -X POST http://localhost:3000/api/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser3", "password": "testpass3"}'
+### 1. Akses Dashboard
 
-# Eksploitasi dengan sessionId
-bash exploit-race.sh --endpoint transfer --threads 5 --session YOUR_SESSION_ID
+Buka `http://localhost:3000` di browser.
 
-bash exploit-race.sh --endpoint coupon --threads 10 --session YOUR_SESSION_ID
+### 2. Login atau Signup
 
-bash exploit-race.sh --endpoint checkout --threads 3 --quantity 5 --session YOUR_SESSION_ID
+- **Demo account**: `user1` / `pass1`
+- Atau buat account baru melalui form Signup
 
-- Transfer: Saldo menjadi negatif ❌
-- Kupon: Kupon masih ditandai sebagai digunakan tetapi diskon diterapkan berkali-kali ❌
-- Checkout: Stok menjadi negatif ❌
+### 3. Dashboard Features
 
-### Menggunakan Skrip Exploit Node.js
+- **Header**: Username dan balance saat ini
+- **Shared State**: Coupon count dan stock HP/Laptop (dibagi semua user)
+- **Transfer**: Kirim uang ke user lain
+- **Checkout**: Beli produk dengan optional coupon
+- **Log**: Real-time log dengan warna kode (hijau=sukses, oranye=error)
+- **Reset**: Reset semua state ke kondisi awal
 
-_Catatan: Jalankan terlebih dahulu `npm install node-fetch@2` jika belum terinstal_
+### 4. Testing Race Conditions
 
-```bash
-# Eksploitasi transfer dengan 5 request bersamaan
-node exploit-race.js --endpoint transfer --threads 5
-
-# Eksploitasi kupon dengan 10 request bersamaan
-node exploit-race.js --endpoint coupon --threads 10
-
-# Eksploitasi checkout dengan kuantitas custom
-node exploit-race.js --endpoint checkout --threads 3 --quantity 5
-````
-
-### Menggunakan Skrip Exploit Bash/Curl
+**Metode 1: Multiple Browser Tabs**
 
 ```bash
-# Buat skrip dapat dijalankan
-chmod +x exploit-race.sh
-
-# Eksploitasi transfer dengan 5 request bersamaan
-bash exploit-race.sh --endpoint transfer --threads 5
-
-# Eksploitasi kupon dengan 10 request bersamaan
-bash exploit-race.sh --endpoint coupon --threads 10
-
-# Eksploitasi checkout dengan kuantitas custom
-bash exploit-race.sh --endpoint checkout --threads 3 --quantity 5
+# Tab 1: Login dengan user1
+# Tab 2: Login dengan user2 (atau user yang sama)
+# Lakukan aksi bersamaan di kedua tab:
+# - Transfer amount besar
+# - Checkout dengan quantity besar
+# - Gunakan coupon DISKON100
 ```
 
-## 📊 Referensi API
+**Metode 2: Multiple User Sessions**
 
-### Sistem Autentikasi
+```bash
+# Buka terminal berbeda
+# Session 1: curl dengan sessionId user1
+# Session 2: curl dengan sessionId user2
+# Kirim request bersamaan
+```
+
+## 🔧 API Reference
+
+### Authentication Endpoints
 
 #### POST `/api/auth/signup`
 
-Mendaftarkan akun pengguna baru dan membuat session.
-
-**Request:**
-
-```json
-{
-  "username": "newuser",
-  "password": "password123"
-}
-```
-
-**Response (Sukses):**
-
-```json
-{
-  "success": true,
-  "message": "Signup successful",
-  "sessionId": "abc123def456ghi789",
-  "username": "newuser"
-}
-```
-
-**Response (Gagal):**
-
-```json
-{
-  "success": false,
-  "message": "Username already exists"
-}
+```bash
+curl -X POST http://localhost:3000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"testpass"}'
 ```
 
 #### POST `/api/auth/login`
 
-Masuk dengan username dan password yang terdaftar.
-
-**Request:**
-
-```json
-{
-  "username": "existinguser",
-  "password": "password123"
-}
-```
-
-**Response (Sukses):**
-
-```json
-{
-  "success": true,
-  "message": "Login successful",
-  "sessionId": "xyz987abc654def321",
-  "username": "existinguser"
-}
-```
-
-**Response (Gagal):**
-
-```json
-{
-  "success": false,
-  "message": "Invalid username or password"
-}
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"user1","password":"pass1"}'
 ```
 
 #### POST `/api/auth/logout`
 
-Logout dan menghapus session.
-
-**Request Header:**
-
-```
-x-session-id: abc123def456ghi789
+```bash
+curl -X POST http://localhost:3000/api/auth/logout \
+  -H "x-session-id: YOUR_SESSION_ID"
 ```
 
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Logout successful"
-}
-```
-
-#### GET `/api/auth/me`
-
-Mendapatkan informasi pengguna yang sedang login.
-
-**Request Header:**
-
-```
-x-session-id: abc123def456ghi789
-```
-
-**Response:**
-
-```json
-{
-  "username": "currentuser"
-}
-```
-
-### Endpoint Vulnerable (Memerlukan Autentikasi)
-
-Semua endpoint vulnerable memerlukan header `x-session-id`:
-
-```
-x-session-id: YOUR_SESSION_ID
-```
+### Vulnerable Endpoints (Require Authentication)
 
 #### GET `/api/status`
 
-Mengembalikan status saat ini dari sistem bersama (shared state untuk semua pengguna).
-
-**Response:**
-
-```json
-{
-  "balance": 1000,
-  "coupons": [
-    {
-      "code": "DISKON100",
-      "used": false
-    }
-  ],
-  "stock": 5,
-  "timestamp": "2026-03-12T10:30:45.123Z"
-}
+```bash
+curl http://localhost:3000/api/status \
+  -H "x-session-id: YOUR_SESSION_ID"
 ```
 
-#### POST `/api/transfer` ⚠️ RENTAN
+#### POST `/api/transfer` ⚠️ VULNERABLE
 
-Transfer uang dari rekening bersama (rentan terhadap race conditions).
-
-**Request:**
-
-```
-Header: x-session-id: YOUR_SESSION_ID
-Body: { "amount": 500 }
+```bash
+curl -X POST http://localhost:3000/api/transfer \
+  -H "Content-Type: application/json" \
+  -H "x-session-id: YOUR_SESSION_ID" \
+  -d '{"amount":500,"recipientUsername":"user2"}'
 ```
 
-**Response (Sukses):**
+**Vulnerability**: Check balance → sleep 2s → update balance
 
-```json
-{
-  "success": true,
-  "message": "Transfer of $500 successful",
-  "newBalance": 500,
-  "timestamp": "2026-03-12T10:30:45.123Z"
-}
+#### POST `/api/checkout` ⚠️ VULNERABLE
+
+```bash
+curl -X POST http://localhost:3000/api/checkout \
+  -H "Content-Type: application/json" \
+  -H "x-session-id: YOUR_SESSION_ID" \
+  -d '{"quantity":2,"productType":"hp","couponCode":"DISKON100"}'
 ```
 
-**Response (Gagal - Rentan):**
+**Vulnerability**: Check stock/coupon → sleep 2s → update stock/coupon
 
-```json
-{
-  "success": true,
-  "message": "Transfer of $800 successful",
-  "newBalance": -800,
-  "timestamp": "2026-03-12T10:30:45.123Z"
-}
+#### GET `/api/coupons/available`
+
+```bash
+curl http://localhost:3000/api/coupons/available
 ```
 
-#### POST `/api/coupon` ⚠️ RENTAN
-
-Menerapkan kupon single-use untuk diskon 20% dari saldo bersama (rentan terhadap race conditions).
-
-**Request:**
-
-```
-Header: x-session-id: YOUR_SESSION_ID
-Body: {}
-```
-
-**Response (Sukses & Rentan):**
-
-```json
-{
-  "success": true,
-  "message": "Coupon DISKON100 applied successfully",
-  "discountPercentage": 20,
-  "discountAmount": "200.00",
-  "newBalance": "800.00",
-  "timestamp": "2026-03-12T10:30:45.123Z"
-}
-```
-
-#### POST `/api/checkout` ⚠️ RENTAN
-
-Membeli item dari stok bersama (rentan terhadap race conditions).
-
-**Request:**
-
-```
-Header: x-session-id: YOUR_SESSION_ID
-Body: { "quantity": 3 }
-```
-
-**Response (Sukses & Rentan):**
-
-```json
-{
-  "success": true,
-  "message": "Checkout successful",
-  "quantity": 3,
-  "pricePerUnit": 10,
-  "totalPrice": 30,
-  "newStock": 2,
-  "timestamp": "2026-03-12T10:30:45.123Z"
-}
-```
+### Utility Endpoints
 
 #### POST `/api/reset`
 
-Reset lab ke status awal (tidak memerlukan autentikasi, untuk keperluan testing).
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Lab state has been reset to initial values",
-  "state": {
-    "balance": 1000,
-    "coupons": [{ "code": "DISKON100", "used": false }],
-    "stock": 5
-  },
-  "timestamp": "2026-03-12T10:30:45.123Z"
-}
+```bash
+curl -X POST http://localhost:3000/api/reset
 ```
 
-## 🛡️ Cara Memperbaiki Kerentanan Ini
+#### GET `/api/health`
 
-### 1. **Gunakan Operasi Atomic**
+```bash
+curl http://localhost:3000/api/health
+```
+
+## 🧪 Exploit Scripts
+
+### Python (`exploit-race.py`)
+
+```bash
+# Dapatkan sessionId terlebih dahulu
+SESSION_ID="your_session_id_here"
+
+# Exploit transfer dengan 5 concurrent requests
+python3 exploit-race.py --endpoint transfer --threads 5 --session $SESSION_ID
+
+# Exploit checkout dengan 3 concurrent requests
+python3 exploit-race.py --endpoint checkout --threads 3 --session $SESSION_ID
+```
+
+### Node.js (`exploit-race.js`)
+
+```bash
+# Install dependencies jika perlu
+npm install node-fetch@2
+
+# Exploit dengan sessionId
+node exploit-race.js --endpoint transfer --threads 5 --session $SESSION_ID
+```
+
+### Bash (`exploit-race.sh`)
+
+```bash
+# Make executable
+chmod +x exploit-race.sh
+
+# Exploit dengan sessionId
+bash exploit-race.sh --endpoint checkout --threads 3 --session $SESSION_ID
+```
+
+## 🎯 Skenario Vulnerable
+
+### 1. Transfer Overspending
+
+**Scenario**: User A transfer $800, User B transfer $800 bersamaan
+**Expected**: Salah satu gagal karena balance tidak cukup
+**Actual**: Keduanya berhasil → balance negatif
+**Root Cause**: Check balance → sleep → update (TOCTOU)
+
+### 2. Checkout Overselling
+
+**Scenario**: Multiple users checkout HP bersamaan
+**Expected**: Stok cukup untuk semua atau beberapa gagal
+**Actual**: Semua berhasil → stok negatif
+**Root Cause**: Check stock → sleep → update stock
+
+### 3. Coupon Reuse
+
+**Scenario**: Multiple users pakai DISKON100 bersamaan
+**Expected**: Hanya 1 user dapat checkout gratis
+**Actual**: Multiple users dapat checkout gratis
+**Root Cause**: Check coupon count → sleep → update count
+
+## 🛡️ Cara Memperbaiki
+
+### 1. Atomic Operations
 
 ```javascript
-// ❌ RENTAN
+// ❌ VULNERABLE
 if (balance >= amount) {
   await sleep(2000);
   balance -= amount;
 }
 
-// ✅ DIPERBAIKI - Operasi atomic
-balance = Math.max(balance - amount, balance); // Operasi tunggal
+// ✅ FIXED - Atomic operation
+balance = Math.max(balance - amount, 0);
 ```
 
-### 2. **Gunakan Transaksi Database**
+### 2. Database Transactions
 
 ```javascript
-// ✅ DIPERBAIKI - Transaksi database
+// ✅ FIXED - Database transaction
 await db.transaction(async (trx) => {
-  const current = await trx("accounts").where("id", userId).first();
-  if (current.balance >= amount) {
-    await trx("accounts")
+  const user = await trx("users").where("id", userId).first();
+  if (user.balance >= amount) {
+    await trx("users")
       .where("id", userId)
-      .update({
-        balance: current.balance - amount,
-      });
+      .update({ balance: user.balance - amount });
   }
 });
 ```
 
-### 3. **Gunakan Locks/Mutexes**
+### 3. Mutex/Locks
 
 ```javascript
-const { Mutex } = require("async-lock");
-const balanceMutex = new Mutex();
+const { Mutex } = require("async-mutex");
+const mutex = new Mutex();
 
-await balanceMutex.lock(async () => {
+await mutex.runExclusive(async () => {
   if (balance >= amount) {
     balance -= amount;
   }
 });
 ```
 
-### 4. **Gunakan Pessimistic Locking**
+### 4. Optimistic Locking
 
 ```javascript
-// Kunci baris sebelum membaca
-const row = await db.raw("SELECT * FROM accounts WHERE id = ? FOR UPDATE", [
-  userId,
-]);
-if (row.balance >= amount) {
-  await update(row.id, { balance: row.balance - amount });
+// ✅ FIXED - Optimistic locking dengan version
+const result = await db("users")
+  .where("id", userId)
+  .andWhere("balance", ">=", amount)
+  .andWhere("version", currentVersion)
+  .update({
+    balance: db.raw("balance - ?", [amount]),
+    version: currentVersion + 1,
+  });
+
+if (result === 0) {
+  // Concurrent modification detected
+  throw new Error("Race condition detected");
 }
 ```
 
-## 📁 Struktur Proyek
+## 📁 Project Structure
 
 ```
 race-condition-lab/
-├── server.js              # Server Express dengan sistem auth dan endpoint rentan
-├── index.html             # Dashboard frontend dengan desain Neo-Brutalist
-├── exploit-race.py        # Skrip pengujian bersamaan Python
-├── exploit-race.js        # Skrip pengujian bersamaan Node.js
-├── exploit-race.sh        # Skrip pengujian bersamaan Bash/Curl
-├── package.json           # Dependensi dan skrip Node.js
-└── README.md              # File ini
+├── server.js                 # Express server dengan vulnerable endpoints
+├── index.html               # Dashboard frontend (HTML only)
+├── public/
+│   ├── css/
+│   │   └── style.css        # All CSS styles (Neo-Brutalist design)
+│   └── js/
+│       └── app.js           # All JavaScript logic
+├── exploit-race.py          # Python exploit script
+├── exploit-race.js          # Node.js exploit script
+├── exploit-race.sh          # Bash exploit script
+├── package.json             # Dependencies
+├── package-lock.json        # Lock file
+└── README.md                # This file
 ```
 
-## 🧪 Contoh Pengujian
+## 🧠 Key Concepts
 
-### Test 1: Double Spending (Transfer Bersamaan)
+### TOCTOU (Time-of-Check to Time-of-Use)
 
-**Menggunakan Dashboard**:
+- **Check**: Memeriksa kondisi (balance >= amount, stock > 0)
+- **Window**: Delay atau concurrent execution
+- **Use**: Mengupdate berdasarkan check yang sudah kadaluarsa
+- **Result**: State inconsistency
 
-1. Buka `http://localhost:3000` di 2 tab
-2. Login dengan user1 di tab 1 dan user2 di tab 2
-3. Di tab 1: Masukkan 900 dan klik Transfer
-4. Di tab 2: Masukkan 900 dan klik Transfer (klik hampir bersamaan)
-5. Lihat di kedua tab: Saldo bisa menjadi `-800` ❌
+### Race Condition vs. Deadlock
 
-**Menggunakan Skrip Python**:
+- **Race Condition**: Multiple threads access shared resource, result depends on timing
+- **Deadlock**: Multiple threads waiting for each other, no progress
+- **This Lab**: Focus on race conditions, not deadlocks
 
-```bash
-python3 exploit-race.py --endpoint transfer --threads 10 --amount 200 --session YOUR_SESSION_ID
-```
+### Shared Resources in This Lab
 
-**Diharapkan**: Saldo akhir menjadi negatif (misalnya, -1000)
+1. **Per-user balance**: Di-share antara concurrent requests dari user yang sama
+2. **Shared stock**: HP dan Laptop stock dibagi semua users
+3. **Coupon count**: DISKON100 count dibagi semua users
 
-### Test 2: Multiple Coupon Uses (Kupon Bersamaan)
+## 🔍 Testing Methodology
 
-**Menggunakan Dashboard**:
+### 1. Manual Testing (Dashboard)
 
-1. Buka `http://localhost:3000` di 3 tab
-2. Login dengan user yang berbeda di setiap tab
-3. Di setiap tab: Klik "CLAIM COUPON" bersamaan
-4. Lihat hasilnya: Konsumsi balance melebihi 20% awal ❌
+- Multiple browser tabs/windows
+- Different user sessions
+- Coordinated simultaneous clicks
 
-**Menggunakan Skrip Bash**:
+### 2. Automated Testing (Scripts)
 
-```bash
-bash exploit-race.sh --endpoint coupon --threads 5 --session YOUR_SESSION_ID
-```
+- Concurrent HTTP requests
+- Parameter variation (amount, quantity)
+- Timing analysis
 
-**Diharapkan**: Diskon diterapkan berkali-kali meskipun kupon single-use
-via Dashboard)
+### 3. Expected Results
 
-```
-[INFO] Login successful
-[INFO] Fetching status...
-Current Balance: $1000
-[SUCCESS] Transfer of $800 successful
-[SUCCESS] Transfer of $900 successful
-[ERROR] Final Balance: $-700
-⚠️  RACE CONDITION DETECTED!
-```
+- **Success**: Race condition exploited (negative balance/stock)
+- **Failure**: Proper synchronization (requests fail appropriately)
 
-### Exploit Berhasil (Python Script)
-
-```
-🔐 Race Condition Vulnerability Exploit (Python)
-Target: http://localhost:3000
-
-======================================================================
-EXPLOITING: transfer
-======================================================================
-
-🔄 Resetting lab state...
-Initial State:
-  💰 Balance: $1000
-  🎟️  Coupon (DISKON100): ❌ NOT USED
-  📦 Stock: 5 units
-
-🎯 Sending 10 concurrent requests (amount: $200 each)...
-
-  Request 1: ✅ SUCCESS - Balance: $800
-  Request 2: ✅ SUCCESS - Balance: $600
-  Request 3: ✅ SUCCESS - Balance: $400
-  Request 4: ✅ SUCCESS - Balance: $200
-  Request 5: ✅ SUCCESS - Balance: $0
-  Request 6: ✅ SUCCESS - Balance: $-200
-  Request 7: ✅ SUCCESS - Balance: $-400
-  Request 8: ✅ SUCCESS - Balance: $-600
-  Request 9: ✅ SUCCESS - Balance: $-800
-  Request 10: ✅ SUCCESS - Balance: $-1000
-
-Final State (after 2.15s):
-  💰 Balance: $-1000
-  🎟️  Coupon (DISKON100): ❌ NOT USED
-  📦 Stock: 5 units yang saling bergantung
-3. **Implementasikan optimistic atau pessimistic locking** untuk akses sumber daya bersama
-4. **Gunakan mutexes/semaphores** untuk melindungi section kritis dalam kode
-5. **Uji race conditions** dengan alat pengujian bersamaan dan load testing
-6. **Autentikasi ≠ Keamanan**: Sistem autentikasi yang baik tidak membuat race conditions hilang
-7. **Review kode sensitif keamanan** dengan extra scrutiny, terutama check-then-act patterns
-8. **Pertimbangkan eventual consistency** patterns untuk sistem terdistribusi
-9. **Version control dan audit logs** untuk melacak perubahan sumber daya bersama
-10. **Monitoring dan alerting** untuk mendeteksi aktivitas mencurigakan
-  Total Transferred: $2000 (melebihi balance 2x!)
-
-🎯 TOCTOU Vulnerability](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use)
-- [Operasi Atomic](https://en.wikipedia.org/wiki/Linearizability)
-- [Database Transactions](https://en.wikipedia.org/wiki/Database_transaction)
-- [Mutex and Locks](https://en.wikipedia.org/wiki/Lock_(computer_science)
-  Request 1: ✅ SUCCESS
-  Request 2: ✅ SUCCESS
-  Request 3: ✅ SUCCESS
-  Request 4: ✅ SUCCESS dengan skenario multi-pengguna
-- Mengapa operasi atomic dan locks sangat penting
-- Bagaimana autentikasi dapat coexist dengan race condition vulnerabilities
-- Cara menguji kerentanan ini dengan berbagai metode
-- Cara memperbaiki kode yang rentan secara aman
-
-**Jangan pernah** gunakan pola vulnerableOT USED
-  📦 Stock: 5 units
-
-ANALYSIS:
-
-  Initial Balance: $1000
-  Final Balance: $-4000
-  Total Transferred: $5000
-
-  🚨 VULNERABILITY EXPLOITED!
-  Balance went negative! Race condition allowed transfers exceeding available balance.
-
-======================================================================
-```
-
-## 🔐 Best Practices Keamanan
-
-1. **Selalu gunakan operasi atomic** saat memeriksa dan memodifikasi status
-2. **Gunakan transaksi database** untuk operasi multi-langkah
-3. **Implementasikan optimistic atau pessimistic locking** jika diperlukan
-4. **Gunakan mutexes/semaphores** untuk akses sumber daya bersama
-5. **Uji race conditions** dengan alat pengujian bersamaan
-6. **Review kode sensitif keamanan** dengan extra scrutiny
-7. **Pertimbangkan eventual consistency** patterns untuk sistem terdistribusi
-
-## 📚 Pembelajaran Lebih Lanjut
-
-**sengaja rentan**
+## 📚 Learning Resources
 
 - [OWASP: Race Conditions](https://owasp.org/www-community/attacks/Race_condition)
-- [CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization](https://cwe.mitre.org/data/definitions/362.html)
-- [Kerentanan TOCTOU](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use)
-- [Operasi Atomic](https://en.wikipedia.org/wiki/Linearizability)
+- [CWE-362: Concurrent Execution using Shared Resource](https://cwe.mitre.org/data/definitions/362.html)
+- [TOCTOU Vulnerability](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use)
+- [Atomic Operations](https://en.wikipedia.org/wiki/Linearizability)
 
-## 🎓 Penggunaan Pendidikan
+## ⚠️ Important Notes
 
-Lab ini dirancang untuk **tujuan pendidikan semata**. Lab ini mendemonstrasikan:
+### Educational Purpose Only
 
-- Bagaimana race conditions bekerja dalam praktik
-- Mengapa pola yang aman penting
-- Cara menguji kerentanan ini
-- Cara memperbaiki kode yang rentan
+- Kode ini **sengaja rentan** untuk tujuan pendidikan
+- **Jangan gunakan** pattern ini dalam production code
+- Selalu implementasikan proper synchronization
 
-**Jangan pernah** gunakan pola ini dalam kode produksi!
+### Safety Features
 
-## 📄 Lisensi
+- **Reset endpoint**: Untuk mengembalikan state ke awal
+- **Auto-logout**: Session management yang proper
+- **Input validation**: Basic validation pada semua endpoints
+
+### Real-world Implications
+
+- Financial systems: Double spending, overdraft
+- E-commerce: Overselling, coupon abuse
+- Inventory systems: Stock inconsistency
+- Booking systems: Double booking
+
+## 🚨 Disclaimer
+
+**FOR EDUCATIONAL PURPOSES ONLY**
+
+Lab ini dirancang untuk:
+
+- Memahami race condition vulnerabilities
+- Mempelajari testing methodologies
+- Mengimplementasikan proper fixes
+
+**Jangan pernah** deploy code dengan pattern vulnerable ke production environment.
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Create Pull Request
+
+## 📄 License
 
 MIT License - Educational Use Only
 
-## ⚠️ Disclaimer
-
-Kode ini sengaja rentan untuk tujuan pendidikan. Jangan gunakan pola-pola ini dalam sistem produksi. Selalu ikuti best practices keamanan saat mengembangkan aplikasi nyata.
-
 ---
 
-**Selamat Belajar! 🚀**
+**Happy Learning! 🚀**
 
-Jika Anda memiliki pertanyaan atau saran, jangan ragu untuk berkontribusi atau membuka issue.
+Jika ada pertanyaan atau menemukan bug, silakan buka issue di repository.
