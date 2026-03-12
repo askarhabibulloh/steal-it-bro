@@ -434,33 +434,33 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════════════════════════╗
-║     Race Condition Vulnerability Lab - RUNNING (With Auth)    ║
+║     Race Condition Vulnerability Lab - RUNNING (With Auth)     ║
 ╠════════════════════════════════════════════════════════════════╣
 ║                                                                ║
-║  Server: http://localhost:${PORT}                             ║
-║  Dashboard: http://localhost:${PORT}/                          ║
+║  Server: http://localhost:${PORT}                                 ║
+║  Dashboard: http://localhost:${PORT}/                             ║
 ║                                                                ║
 ║  Auth Endpoints:                                               ║
-║  - POST /api/auth/signup (Register new user)                 ║
-║  - POST /api/auth/login (Login to account)                   ║
-║  - POST /api/auth/logout (Logout)                            ║
-║  - GET /api/auth/me (Get current user)                       ║
+║  - POST /api/auth/signup (Register new user)                   ║
+║  - POST /api/auth/login (Login to account)                     ║
+║  - POST /api/auth/logout (Logout)                              ║
+║  - GET /api/auth/me (Get current user)                         ║
 ║                                                                ║
 ║  Vulnerable Endpoints (Race Conditions):                       ║
-║  - POST /api/transfer (Per-user balance race condition)       ║
-║  - POST /api/checkout (Stock + Coupon race condition)         ║
-║  - GET /api/status (View user & shared state)                ║
-║  - GET /api/coupons/available (Check coupon count)            ║
-║  - POST /api/reset (Reset all state)                          ║
+║  - POST /api/transfer (Per-user balance race condition)        ║
+║  - POST /api/checkout (Stock + Coupon race condition)          ║
+║  - GET /api/status (View user & shared state)                  ║
+║  - GET /api/coupons/available (Check coupon count)             ║
+║  - POST /api/reset (Reset all state)                           ║
 ║                                                                ║
 ║  Initial Shared State:                                         ║
-║  - Coupon Count: ${db.couponCount}                                   ║
-║  - Stock HP: ${db.stock.hp} units                                    ║
-║  - Stock Laptop: ${db.stock.laptop} units                            ║
+║  - Coupon Count: ${db.couponCount}                                             ║
+║  - Stock HP: ${db.stock.hp} units                                           ║
+║  - Stock Laptop: ${db.stock.laptop} units                                       ║
 ║  - Per-User Balance: $1000 (each user independent)             ║
 ║                                                                ║
-║  NOTE: Stock is shared across all users (separate by type).   ║
-║  This makes race conditions realistic!                        ║
+║  NOTE: Stock is shared across all users (separate by type).    ║
+║  This makes race conditions realistic!                         ║
 ║                                                                ║
 ╚════════════════════════════════════════════════════════════════╝
   `);
