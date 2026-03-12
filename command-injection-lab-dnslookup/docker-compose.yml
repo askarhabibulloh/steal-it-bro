@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  dns-lookup-lab:
+    build: .
+    container_name: command-injection-dns-lab
+    ports:
+      - "5000:5000"
+    environment:
+      - SECRET_API_KEY=SUPER_SECRET_KEY_12345
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    networks:
+      - lab-network
+    restart: unless-stopped
+    # Ensure container has internet access for nslookup to work
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    # Add healthcheck configuration
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  lab-network:
+    driver: bridge
