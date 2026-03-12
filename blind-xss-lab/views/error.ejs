@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error - ElectroStore</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <%- include('partials/header', { user: user, cart: cart }) %>
+
+    <main class="main-content">
+      <div class="container">
+        <div class="card" style="max-width: 600px; margin: 2rem auto">
+          <div class="card-header">
+            <h2 class="card-title">
+              <i class="fas fa-exclamation-triangle"></i> Error
+            </h2>
+          </div>
+
+          <div class="card-body">
+            <div class="alert alert-error">
+              <i class="fas fa-exclamation-circle"></i>
+              <strong><%= message %></strong>
+            </div>
+
+            <div class="text-center mt-4">
+              <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Go to Home
+              </a>
+              <a href="/products" class="btn btn-secondary">
+                <i class="fas fa-store"></i> Browse Products
+              </a>
+            </div>
+
+            <div class="security-warning mt-4">
+              <i class="fas fa-shield-alt"></i>
+              <strong>Note:</strong> This is a security training environment.
+              Errors may occur due to intentional vulnerabilities for
+              educational purposes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

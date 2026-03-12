@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ElectroStore</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('partials/header', { user: user, cart: cart }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </h2>
+                </div>
+                
+                <div class="card-body">
+                    <% if (error) { %>
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-triangle"></i> <%= error %>
+                        </div>
+                    <% } %>
+                    
+                    <form action="/signup" method="POST">
+                        <div class="form-group">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user"></i> Username
+                            </label>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                class="form-control" 
+                                placeholder="Enter your username"
+                                required
+                            >
+                            <small class="text-muted">Choose a unique username</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i> Password
+                            </label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-control" 
+                                placeholder="Enter your password"
+                                required
+                            >
+                            <small class="text-muted">No complexity rules - this is a demo lab</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p>Already have an account? <a href="/login">Login here</a></p>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="security-warning">
+                        <i class="fas fa-shield-alt"></i>
+                        <strong>Security Note:</strong> This is a training environment. Do not use real personal information.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i> About This Lab
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>This is a <strong>Blind XSS Lab</strong> designed for security education.</p>
+                    <ul>
+                        <li>Simulates an e-commerce platform with a deliberate XSS vulnerability</li>
+                        <li>Admin users can view order details where delivery notes are rendered unsafely</li>
+                        <li>Practice injecting XSS payloads into delivery notes</li>
+                        <li>Admin bot automatically views orders every 60 seconds</li>
+                    </ul>
+                    <p class="vulnerability-note mt-2">
+                        <i class="fas fa-bug"></i>
+                        <strong>XSS Vulnerability:</strong> Admin order details page renders delivery notes without sanitization
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

