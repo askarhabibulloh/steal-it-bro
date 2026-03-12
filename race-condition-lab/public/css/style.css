@@ -1,0 +1,421 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", "Arial", sans-serif;
+  background-color: #fdfdfa;
+  color: #000;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ============= Neo-Brutalist Components ============= */
+
+button,
+input {
+  font-family: "Inter", "Arial", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.1s ease;
+  border: 2px solid #000;
+  background-color: #fdfdfa;
+  padding: 12px 16px;
+  display: inline-block;
+}
+
+button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000;
+}
+
+button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000;
+}
+
+button.btn-primary {
+  background-color: #81e6d9;
+  color: #000;
+  box-shadow: 4px 4px 0px 0px #000;
+}
+
+button.btn-primary:hover {
+  box-shadow: 6px 6px 0px 0px #000;
+}
+
+button.btn-danger {
+  background-color: #f6ad55;
+  color: #000;
+  box-shadow: 4px 4px 0px 0px #000;
+}
+
+button.btn-danger:hover {
+  box-shadow: 6px 6px 0px 0px #000;
+}
+
+input,
+textarea {
+  border: 2px solid #000;
+  padding: 10px 12px;
+  background-color: #fdfdfa;
+  color: #000;
+  font-weight: 600;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #81e6d9;
+}
+
+/* ============= Layout ============= */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  border: 3px solid #000;
+  padding: 24px;
+  margin-bottom: 20px;
+  background-color: #fdfdfa;
+  box-shadow: 8px 8px 0px 0px #000;
+}
+
+.card.small {
+  padding: 16px;
+}
+
+/* ============= Auth Screens ============= */
+
+.auth-screen,
+.dashboard-screen {
+  display: none;
+}
+
+.auth-screen.active,
+.dashboard-screen.active {
+  display: block;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 3px solid #000;
+}
+
+.tab-button {
+  flex: 1;
+  border: 3px solid #000;
+  border-bottom: none;
+  background-color: #fdfdfa;
+  padding: 12px;
+  text-align: center;
+  box-shadow: none;
+}
+
+.tab-button.active {
+  background-color: #81e6d9;
+  box-shadow: 4px -4px 0px 0px #000;
+}
+
+.tab-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* ============= Form ============= */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+  border: 2px solid #000;
+  padding: 12px;
+  background-color: #fdfdfa;
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+/* ============= State Display ============= */
+
+.state-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.state-card {
+  border: 3px solid #000;
+  padding: 20px;
+  text-align: center;
+  background-color: #fdfdfa;
+  box-shadow: 4px 4px 0px 0px #000;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.state-card.balance {
+  background-color: #81e6d9;
+}
+
+.state-card.coupon {
+  background-color: #f6ad55;
+}
+
+.state-card.stock {
+  background-color: #fdfdfa;
+  border: 3px solid #81e6d9;
+}
+
+.state-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.state-value {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 8px 0;
+}
+
+/* ============= Actions Grid ============= */
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.action-card {
+  border: 3px solid #000;
+  padding: 20px;
+  background-color: #fdfdfa;
+  box-shadow: 4px 4px 0px 0px #000;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-card h3 {
+  font-size: 16px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.action-input {
+  width: 100%;
+  border: 2px solid #000;
+  padding: 12px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.action-button {
+  width: 100%;
+  background-color: #81e6d9;
+  box-shadow: 3px 3px 0px 0px #000;
+  padding: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-top: auto;
+}
+
+/* ============= Log ============= */
+
+.log-container {
+  border: 3px solid #000;
+  background-color: #1a1a1a;
+  color: #81e6d9;
+  padding: 16px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: inset 4px 4px 0px 0px rgba(0, 0, 0, 0.3);
+  margin-bottom: 16px;
+}
+
+.log-entry {
+  margin: 4px 0;
+  word-break: break-word;
+}
+
+.log-entry.success {
+  color: #81e6d9;
+}
+
+.log-entry.error {
+  color: #f6ad55;
+}
+
+.log-entry.info {
+  color: #666;
+}
+
+/* ============= Header ============= */
+
+.header {
+  border-bottom: 3px solid #000;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.user-info {
+  text-align: right;
+  border: 2px solid #000;
+  padding: 12px 16px;
+  background-color: #81e6d9;
+  box-shadow: 3px 3px 0px 0px #000;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.logout-btn {
+  background-color: #f6ad55;
+  margin-top: 8px;
+  width: 100%;
+  box-shadow: 3px 3px 0px 0px #000;
+  padding: 10px;
+  font-size: 12px;
+}
+
+/* ============= Reset Button ============= */
+
+.reset-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 3px solid #000;
+}
+
+.reset-btn {
+  width: 100%;
+  background-color: #f6ad55;
+  padding: 16px;
+  font-size: 14px;
+  box-shadow: 6px 6px 0px 0px #000;
+}
+
+.reset-btn:hover {
+  box-shadow: 8px 8px 0px 0px #000;
+}
+
+/* ============= Responsive ============= */
+
+@media (max-width: 768px) {
+  .state-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .container {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .state-card {
+    min-height: 120px;
+    padding: 16px;
+  }
+
+  .action-card {
+    min-height: 240px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .state-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 32px;
+  }
+
+  .user-info {
+    min-width: 150px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
+
+.message {
+  border: 2px solid #000;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  background-color: #81e6d9;
+  box-shadow: 3px 3px 0px 0px #000;
+}
+
+.message.error {
+  background-color: #f6ad55;
+}
+
+.full-width {
+  width: 100%;
+}
