@@ -33,18 +33,24 @@ function verifySession(req) {
 // ============================================================================
 // Global Database - In-memory, vulnerable to race conditions
 // Shared resources among ALL users (realistic scenario)
+// NOTE: Balance is now per-user (in users[username].balance)
+// Only coupons count and stock are shared
 // ============================================================================
 const db = {
-  balance: 1000,
-  coupons: [{ code: "DISKON100", used: false }],
-  stock: 5,
+  couponCount: 3, // Available DISKON100 coupons
+  stock: {
+    hp: 8,
+    laptop: 8,
+  },
 };
 
 // Initial state for reset
 const initialState = {
-  balance: 1000,
-  coupons: [{ code: "DISKON100", used: false }],
-  stock: 5,
+  couponCount: 3,
+  stock: {
+    hp: 8,
+    laptop: 8,
+  },
 };
 
 // Helper function to create intentional race window
@@ -74,7 +80,8 @@ app.post("/api/auth/signup", (req, res) => {
 
   users[username] = {
     password: password,
-    balance: db.balance,
+    balance: 1000,
+    itemsShipped: 0,
     createdAt: new Date().toISOString(),
   };
 
@@ -160,11 +167,12 @@ app.get("/api/auth/me", (req, res) => {
     success: true,
     username: username,
     userBalance: user.balance,
+    itemsShipped: user.itemsShipped,
   });
 });
 
 // ============================================================================
-// VULNERABLE ENDPOINT 1: Transfer (Balance Check on SHARED GLOBAL STATE)
+// VULNERABLE ENDPOINT 1: Transfer (Per-user balance - can demonstrate race condition)
 // ============================================================================
 app.post("/api/transfer", async (req, res) => {
   const username = verifySession(req);
@@ -175,43 +183,61 @@ app.post("/api/transfer", async (req, res) => {
     });
   }
 
-  const amount = req.body.amount;
+  const { amount, recipientUsername } = req.body;
 
   // Validation
   if (!amount || typeof amount !== "number" || amount <= 0) {
     return res.status(400).json({ error: "Invalid amount" });
   }
 
+  if (!recipientUsername || typeof recipientUsername !== "string") {
+    return res.status(400).json({ error: "Recipient username required" });
+  }
+
+  if (username === recipientUsername) {
+    return res.status(400).json({ error: "Cannot transfer to yourself" });
+  }
+
+  const recipient = users[recipientUsername];
+  if (!recipient) {
+    return res.status(400).json({ error: "Recipient user not found" });
+  }
+
+  const sender = users[username];
+
   // --- START OF VULNERABLE PATTERN ---
-  // TOCTOU Vulnerability: Check phase (checking SHARED global state)
-  if (db.balance >= amount) {
+  // TOCTOU Vulnerability: Check phase (checking sender's per-user balance)
+  if (sender.balance >= amount) {
     console.log(
-      `[TRANSFER] ${username} - Check passed: balance=${db.balance}, amount=${amount}`,
+      `[TRANSFER] ${username} → ${recipientUsername} - Check passed: balance=${sender.balance}, amount=${amount}`,
     );
 
     // TOCTOU Vulnerability: Intentional delay widens the race window
     await sleep(2000);
     console.log(
-      `[TRANSFER] ${username} - After sleep: current balance=${db.balance}`,
+      `[TRANSFER] ${username} - After sleep: current balance=${sender.balance}`,
     );
 
     // Update phase - another thread may have modified balance during sleep!
-    db.balance = db.balance - amount;
+    sender.balance = sender.balance - amount;
+    recipient.balance = recipient.balance + amount;
+
     console.log(
-      `[TRANSFER] ${username} - After update: new balance=${db.balance}`,
+      `[TRANSFER] ${username} - After update: new balance=${sender.balance}, ${recipientUsername} new balance=${recipient.balance}`,
     );
 
     return res.json({
       success: true,
-      message: `Transfer of $${amount} successful`,
-      newBalance: db.balance,
+      message: `Transfer of $${amount} to ${recipientUsername} successful`,
+      senderNewBalance: sender.balance,
+      recipientNewBalance: recipient.balance,
       timestamp: new Date().toISOString(),
     });
   } else {
     return res.status(400).json({
       success: false,
       message: "Insufficient funds",
-      currentBalance: db.balance,
+      currentBalance: sender.balance,
       requestedAmount: amount,
     });
   }
@@ -219,59 +245,18 @@ app.post("/api/transfer", async (req, res) => {
 });
 
 // ============================================================================
-// VULNERABLE ENDPOINT 2: Coupon Usage (Single-Use Check on SHARED STATE)
+// INFO ENDPOINT: Get available coupon count
 // ============================================================================
-app.post("/api/coupon", async (req, res) => {
-  const username = verifySession(req);
-  if (!username) {
-    return res.status(401).json({
-      success: false,
-      message: "Not authenticated",
-    });
-  }
-
-  const discountPercentage = 20; // 20% discount
-
-  // --- START OF VULNERABLE PATTERN ---
-  // TOCTOU Vulnerability: Check phase (checking SHARED global coupon)
-  if (db.coupons[0] && db.coupons[0].used === false) {
-    console.log(`[COUPON] ${username} - Check passed: coupon unused`);
-
-    // TOCTOU Vulnerability: Intentional delay widens the race window
-    await sleep(2000);
-    console.log(
-      `[COUPON] ${username} - After sleep: coupon.used=${db.coupons[0].used}`,
-    );
-
-    // Update phase - another thread may have marked coupon as used during sleep!
-    db.coupons[0].used = true;
-    const discount = (db.balance * discountPercentage) / 100;
-    db.balance = db.balance - discount;
-
-    console.log(
-      `[COUPON] ${username} - After update: coupon.used=${db.coupons[0].used}, discount=$${discount}, newBalance=${db.balance}`,
-    );
-
-    return res.json({
-      success: true,
-      message: `Coupon DISKON100 applied successfully`,
-      discountPercentage: discountPercentage,
-      discountAmount: discount.toFixed(2),
-      newBalance: db.balance.toFixed(2),
-      timestamp: new Date().toISOString(),
-    });
-  } else {
-    return res.status(400).json({
-      success: false,
-      message: "Coupon already used or not available",
-      couponStatus: db.coupons[0] ? db.coupons[0].used : "not_found",
-    });
-  }
-  // --- END OF VULNERABLE PATTERN ---
+app.get("/api/coupons/available", (req, res) => {
+  res.json({
+    couponCode: "DISKON100",
+    availableCount: db.couponCount,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // ============================================================================
-// VULNERABLE ENDPOINT 3: Checkout (Stock Check on SHARED STATE)
+// VULNERABLE ENDPOINT 3: Checkout (Stock Check + Coupon on SHARED STATE)
 // ============================================================================
 app.post("/api/checkout", async (req, res) => {
   const username = verifySession(req);
@@ -282,50 +267,104 @@ app.post("/api/checkout", async (req, res) => {
     });
   }
 
-  const quantity = req.body.quantity || 1;
-  const pricePerUnit = 10;
+  const { quantity, productType, couponCode } = req.body;
+  const user = users[username];
 
   // Validation
   if (!quantity || typeof quantity !== "number" || quantity <= 0) {
     return res.status(400).json({ error: "Invalid quantity" });
   }
 
+  if (!productType || !["hp", "laptop"].includes(productType.toLowerCase())) {
+    return res
+      .status(400)
+      .json({ error: "Product type must be 'hp' or 'laptop'" });
+  }
+
+  const priceMap = {
+    hp: 50,
+    laptop: 100,
+  };
+
+  const pricePerUnit = priceMap[productType.toLowerCase()];
+  let totalPrice = quantity * pricePerUnit;
+  let appliedCoupon = false;
+
+  // Check if coupon code is DISKON100 and available
+  if (couponCode && couponCode.trim().toUpperCase() === "DISKON100") {
+    if (db.couponCount > 0) {
+      totalPrice = 0; // Coupon makes checkout free
+      appliedCoupon = true;
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Coupon DISKON100 is not available",
+        availableCoupons: db.couponCount,
+      });
+    }
+  }
+
+  // Check if user has enough balance (skip if appliedCoupon)
+  if (!appliedCoupon && user.balance < totalPrice) {
+    return res.status(400).json({
+      success: false,
+      message: "Insufficient balance",
+      userBalance: user.balance,
+      requiredAmount: totalPrice,
+    });
+  }
+
   // --- START OF VULNERABLE PATTERN ---
   // TOCTOU Vulnerability: Check phase (checking SHARED global stock)
-  if (db.stock > 0) {
+  if (db.stock[productType] >= quantity) {
     console.log(
-      `[CHECKOUT] ${username} - Check passed: stock=${db.stock}, quantity=${quantity}`,
+      `[CHECKOUT] ${username} - Check passed: stock[${productType}]=${db.stock[productType]}, quantity=${quantity}, appliedCoupon=${appliedCoupon}`,
     );
 
     // TOCTOU Vulnerability: Intentional delay widens the race window
     await sleep(2000);
     console.log(
-      `[CHECKOUT] ${username} - After sleep: current stock=${db.stock}`,
+      `[CHECKOUT] ${username} - After sleep: current stock[${productType}]=${db.stock[productType]}`,
     );
 
     // Update phase - another thread may have modified stock during sleep!
-    // Note: Still allows going negative (vulnerability!)
-    db.stock = db.stock - quantity;
-    const totalPrice = quantity * pricePerUnit;
+    db.stock[productType] = db.stock[productType] - quantity;
+
+    // Deduct from user balance (unless coupon was applied)
+    if (!appliedCoupon) {
+      user.balance = user.balance - totalPrice;
+    } else {
+      // Decrement coupon count if used
+      db.couponCount = db.couponCount - 1;
+    }
+
+    // Track items shipped
+    user.itemsShipped = user.itemsShipped + quantity;
 
     console.log(
-      `[CHECKOUT] ${username} - After update: new stock=${db.stock}, totalPrice=$${totalPrice}`,
+      `[CHECKOUT] ${username} - After update: new stock[${productType}]=${db.stock[productType]}, userBalance=${user.balance}, couponCount=${db.couponCount}, itemsShipped=${user.itemsShipped}`,
     );
 
     return res.json({
       success: true,
       message: `Checkout successful`,
+      productType: productType,
       quantity: quantity,
       pricePerUnit: pricePerUnit,
       totalPrice: totalPrice,
+      appliedCoupon: appliedCoupon,
+      userNewBalance: user.balance,
+      shippingStatus: "shipped",
+      itemCount: quantity,
       newStock: db.stock,
+      totalItemsShipped: user.itemsShipped,
       timestamp: new Date().toISOString(),
     });
   } else {
     return res.status(400).json({
       success: false,
       message: "Out of stock",
-      currentStock: db.stock,
+      currentStock: db.stock[productType],
       requestedQuantity: quantity,
     });
   }
@@ -333,13 +372,22 @@ app.post("/api/checkout", async (req, res) => {
 });
 
 // ============================================================================
-// GET Current Shared State
+// GET Current Shared State + User Balance
 // ============================================================================
 app.get("/api/status", (req, res) => {
+  const username = verifySession(req);
+  const userBalance =
+    username && users[username] ? users[username].balance : null;
+  const itemsShipped =
+    username && users[username] ? users[username].itemsShipped : null;
+
   res.json({
-    balance: db.balance,
-    coupons: db.coupons,
-    stock: db.stock,
+    sharedState: {
+      couponCount: db.couponCount,
+      stock: db.stock,
+    },
+    userBalance: userBalance,
+    itemsShipped: itemsShipped,
     timestamp: new Date().toISOString(),
   });
 });
@@ -348,19 +396,25 @@ app.get("/api/status", (req, res) => {
 // RESET Endpoint
 // ============================================================================
 app.post("/api/reset", (req, res) => {
-  // Deep copy initial state
-  db.balance = initialState.balance;
-  db.coupons = JSON.parse(JSON.stringify(initialState.coupons));
-  db.stock = initialState.stock;
+  // Reset shared state
+  db.couponCount = initialState.couponCount;
+  db.stock = { ...initialState.stock }; // Deep copy stock object
 
-  console.log("[RESET] Shared database reset to initial state");
+  // Reset all users' balance and items shipped
+  Object.keys(users).forEach((username) => {
+    users[username].balance = 1000;
+    users[username].itemsShipped = 0;
+  });
+
+  console.log(
+    "[RESET] Lab state reset to initial values (all users, shared state)",
+  );
 
   res.json({
     success: true,
     message: "Lab state has been reset to initial values",
-    state: {
-      balance: db.balance,
-      coupons: db.coupons,
+    sharedState: {
+      couponCount: db.couponCount,
       stock: db.stock,
     },
     timestamp: new Date().toISOString(),
@@ -392,20 +446,21 @@ app.listen(PORT, () => {
 ║  - POST /api/auth/logout (Logout)                            ║
 ║  - GET /api/auth/me (Get current user)                       ║
 ║                                                                ║
-║  Vulnerable Endpoints (SHARED global state):                  ║
-║  - POST /api/transfer (Balance race condition)                ║
-║  - POST /api/coupon (Single-use coupon race condition)        ║
-║  - POST /api/checkout (Stock race condition)                  ║
-║  - GET /api/status (View current shared state)                ║
-║  - POST /api/reset (Reset shared state)                       ║
+║  Vulnerable Endpoints (Race Conditions):                       ║
+║  - POST /api/transfer (Per-user balance race condition)       ║
+║  - POST /api/checkout (Stock + Coupon race condition)         ║
+║  - GET /api/status (View user & shared state)                ║
+║  - GET /api/coupons/available (Check coupon count)            ║
+║  - POST /api/reset (Reset all state)                          ║
 ║                                                                ║
 ║  Initial Shared State:                                         ║
-║  - Balance: $${db.balance}                                          ║
-║  - Coupon: ${db.coupons[0].code} (Used: ${db.coupons[0].used})          ║
-║  - Stock: ${db.stock} units                                        ║
+║  - Coupon Count: ${db.couponCount}                                   ║
+║  - Stock HP: ${db.stock.hp} units                                    ║
+║  - Stock Laptop: ${db.stock.laptop} units                            ║
+║  - Per-User Balance: $1000 (each user independent)             ║
 ║                                                                ║
-║  NOTE: All users share the same global state (balance,        ║
-║  coupon, stock). This makes race conditions realistic!        ║
+║  NOTE: Stock is shared across all users (separate by type).   ║
+║  This makes race conditions realistic!                        ║
 ║                                                                ║
 ╚════════════════════════════════════════════════════════════════╝
   `);

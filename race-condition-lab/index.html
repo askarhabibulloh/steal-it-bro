@@ -496,7 +496,7 @@
           <div style="text-align: right">
             <div class="user-info">
               👤 <span id="current-username">User</span><br />
-              Connected
+              Balance: $<span id="current-balance">1000</span>
             </div>
             <button class="logout-btn" onclick="logout()">Logout</button>
           </div>
@@ -515,23 +515,26 @@
             Shared State (All Users)
           </h2>
           <div class="state-grid">
-            <div class="state-card balance">
-              <div class="state-label">Balance</div>
-              <div class="state-value" id="state-balance">$1000</div>
-            </div>
             <div class="state-card coupon">
-              <div class="state-label">Coupon</div>
+              <div class="state-label">Available Coupons</div>
               <div
                 class="state-value"
                 id="state-coupon"
                 style="font-size: 14px"
               >
-                UNUSED
+                3
+              </div>
+              <div style="font-size: 11px; margin-top: 8px; text-align: center">
+                DISKON100 - Use in checkout
               </div>
             </div>
             <div class="state-card stock">
-              <div class="state-label">Stock</div>
-              <div class="state-value" id="state-stock">5</div>
+              <div class="state-label">Stock (HP)</div>
+              <div class="state-value" id="state-stock-hp">8</div>
+            </div>
+            <div class="state-card stock">
+              <div class="state-label">Stock (Laptop)</div>
+              <div class="state-value" id="state-stock-laptop">8</div>
             </div>
           </div>
         </div>
@@ -553,68 +556,115 @@
             <div class="action-card">
               <h3>💸 Transfer</h3>
               <input
+                type="text"
+                id="transfer-recipient"
+                class="action-input"
+                placeholder="Recipient username"
+              />
+              <input
                 type="number"
                 id="transfer-amount"
                 class="action-input"
                 placeholder="Amount"
-                value="600"
+                value="100"
               />
               <button class="action-button" onclick="performTransfer()">
                 Send
               </button>
             </div>
 
-            <!-- Coupon -->
+            <!-- Coupon Info -->
             <div class="action-card">
-              <h3>🎟️ Coupon</h3>
+              <h3>🎟️ Coupons Info</h3>
               <div
                 style="
                   text-align: center;
-                  padding: 12px;
+                  padding: 16px;
                   border: 2px solid #000;
                   margin-bottom: 12px;
                   background-color: #f0f0f0;
-                  font-size: 11px;
+                  font-size: 12px;
+                  line-height: 1.6;
                 "
               >
-                Click to claim DISKON100
+                <strong>DISKON100</strong><br />
+                Available:
+                <span id="coupon-info-count">3</span> coupons<br />
+                <span style="font-size: 10px">Use code in checkout</span>
               </div>
-              <button class="action-button" onclick="useCoupon()">Claim</button>
             </div>
 
             <!-- Checkout -->
             <div class="action-card">
               <h3>📦 Checkout</h3>
+              <div style="margin-bottom: 8px; font-size: 11px">
+                <label style="display: block; margin-bottom: 4px"
+                  >Product Type:</label
+                >
+                <select
+                  id="checkout-product"
+                  class="action-input"
+                  style="width: 100%; padding: 8px"
+                >
+                  <option value="hp">HP - $50</option>
+                  <option value="laptop">Laptop - $100</option>
+                </select>
+              </div>
               <input
                 type="number"
                 id="checkout-quantity"
                 class="action-input"
                 placeholder="Quantity"
-                value="3"
+                value="1"
               />
+              <input
+                type="text"
+                id="checkout-coupon"
+                class="action-input"
+                placeholder="Coupon (optional)"
+              />
+              <div
+                style="
+                  font-size: 11px;
+                  text-align: center;
+                  padding: 8px;
+                  margin-bottom: 8px;
+                  border: 1px solid #000;
+                  background-color: #f9f9f9;
+                "
+              >
+                Total: $<span id="checkout-total">50</span>
+              </div>
               <button class="action-button" onclick="performCheckout()">
-                Buy
+                Checkout
               </button>
             </div>
 
-            <!-- Status -->
+            <!-- Items Shipped Stats -->
             <div class="action-card">
-              <h3>⚡ Refresh</h3>
+              <h3>📦 Items Shipped</h3>
               <div
                 style="
                   text-align: center;
-                  padding: 12px;
+                  padding: 16px;
                   border: 2px solid #000;
                   margin-bottom: 12px;
                   background-color: #f0f0f0;
-                  font-size: 11px;
+                  font-size: 24px;
+                  font-weight: 900;
                 "
               >
-                Get latest state
+                <span id="items-shipped-count">0</span>
               </div>
-              <button class="action-button" onclick="updateStatus()">
-                Refresh
-              </button>
+              <div
+                style="
+                  text-align: center;
+                  font-size: 11px;
+                  color: #666;
+                "
+              >
+                Total items you've checked out
+              </div>
             </div>
           </div>
         </div>
@@ -769,16 +819,23 @@
       // ============= API Functions =============
 
       async function performTransfer() {
+        const recipientUsername =
+          document.getElementById("transfer-recipient").value;
         const amount = parseFloat(
           document.getElementById("transfer-amount").value,
         );
+
+        if (!recipientUsername || recipientUsername.trim() === "") {
+          addLog("❌ Recipient username required", "error");
+          return;
+        }
 
         if (isNaN(amount) || amount <= 0) {
           addLog("❌ Invalid amount", "error");
           return;
         }
 
-        addLog(`💸 Transferring $${amount}...`, "info");
+        addLog(`💸 Transferring $${amount} to ${recipientUsername}...`, "info");
 
         try {
           const res = await fetch(`${API_BASE}/api/transfer`, {
@@ -787,45 +844,18 @@
               "Content-Type": "application/json",
               "x-session-id": currentSessionId,
             },
-            body: JSON.stringify({ amount }),
+            body: JSON.stringify({ amount, recipientUsername }),
           });
 
           const data = await res.json();
 
           if (data.success) {
             addLog(
-              `✓ ${data.message} → New balance: $${data.newBalance}`,
+              `✓ ${data.message} → Your balance: $${data.senderNewBalance}`,
               "success",
             );
-          } else {
-            addLog(`❌ ${data.message}`, "error");
-          }
-          updateStatus();
-        } catch (err) {
-          addLog(`❌ Error: ${err.message}`, "error");
-        }
-      }
-
-      async function useCoupon() {
-        addLog("🎟️ Claiming DISKON100...", "info");
-
-        try {
-          const res = await fetch(`${API_BASE}/api/coupon`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-session-id": currentSessionId,
-            },
-            body: JSON.stringify({}),
-          });
-
-          const data = await res.json();
-
-          if (data.success) {
-            addLog(
-              `✓ ${data.message} Discount: $${data.discountAmount}`,
-              "success",
-            );
+            document.getElementById("transfer-recipient").value = "";
+            document.getElementById("transfer-amount").value = "100";
           } else {
             addLog(`❌ ${data.message}`, "error");
           }
@@ -836,16 +866,18 @@
       }
 
       async function performCheckout() {
+        const productType = document.getElementById("checkout-product").value;
         const quantity = parseInt(
           document.getElementById("checkout-quantity").value,
         );
+        const couponCode = document.getElementById("checkout-coupon").value;
 
         if (isNaN(quantity) || quantity <= 0) {
           addLog("❌ Invalid quantity", "error");
           return;
         }
 
-        addLog(`📦 Checking out ${quantity} unit(s)...`, "info");
+        addLog(`📦 Checking out ${quantity} ${productType}(s)...`, "info");
 
         try {
           const res = await fetch(`${API_BASE}/api/checkout`, {
@@ -854,16 +886,25 @@
               "Content-Type": "application/json",
               "x-session-id": currentSessionId,
             },
-            body: JSON.stringify({ quantity }),
+            body: JSON.stringify({
+              quantity,
+              productType,
+              couponCode: couponCode || undefined,
+            }),
           });
 
           const data = await res.json();
 
           if (data.success) {
+            let couponMsg = data.appliedCoupon
+              ? " (Coupon applied - FREE)"
+              : `($${data.totalPrice})`;
             addLog(
-              `✓ ${data.message} Total: $${data.totalPrice} → Stock: ${data.newStock}`,
+              `✓ Checkout successful${couponMsg} - Status: ${data.shippingStatus} - Total shipped: ${data.totalItemsShipped} item(s)`,
               "success",
             );
+            document.getElementById("checkout-coupon").value = "";
+            document.getElementById("checkout-quantity").value = "1";
           } else {
             addLog(`❌ ${data.message}`, "error");
           }
@@ -875,16 +916,35 @@
 
       async function updateStatus() {
         try {
-          const res = await fetch(`${API_BASE}/api/status`);
+          const res = await fetch(`${API_BASE}/api/status`, {
+            headers: { "x-session-id": currentSessionId },
+          });
           const data = await res.json();
 
-          document.getElementById("state-balance").textContent =
-            `$${data.balance}`;
-          document.getElementById("state-coupon").textContent = data.coupons[0]
-            .used
-            ? "✅ USED"
-            : "❌ UNUSED";
-          document.getElementById("state-stock").textContent = data.stock;
+          // Update shared state
+          document.getElementById("state-coupon").textContent =
+            data.sharedState.couponCount;
+          document.getElementById("coupon-info-count").textContent =
+            data.sharedState.couponCount;
+          document.getElementById("state-stock-hp").textContent =
+            data.sharedState.stock.hp;
+          document.getElementById("state-stock-laptop").textContent =
+            data.sharedState.stock.laptop;
+
+          // Update user balance
+          if (data.userBalance !== null && data.userBalance !== undefined) {
+            document.getElementById("current-balance").textContent =
+              data.userBalance;
+          }
+
+          // Update items shipped stats
+          if (
+            data.itemsShipped !== null &&
+            data.itemsShipped !== undefined
+          ) {
+            document.getElementById("items-shipped-count").textContent =
+              data.itemsShipped;
+          }
         } catch (err) {
           console.error("Error updating status:", err);
         }
@@ -956,6 +1016,42 @@
         document.getElementById("login-password").value = "pass1";
         login();
       }
+
+      // Calculate and update checkout total
+      function updateCheckoutTotal() {
+        const priceMap = { hp: 50, laptop: 100 };
+        const productType = document.getElementById("checkout-product").value;
+        const quantity =
+          parseInt(document.getElementById("checkout-quantity").value) || 1;
+        const couponCode = document.getElementById("checkout-coupon").value;
+
+        const pricePerUnit = priceMap[productType] || 50;
+        let total = quantity * pricePerUnit;
+
+        // Check if DISKON100 coupon is entered
+        if (couponCode.trim().toUpperCase() === "DISKON100") {
+          total = 0;
+        }
+
+        document.getElementById("checkout-total").textContent = total;
+      }
+
+      // Add event listeners when dashboard is shown
+      function setupCheckoutListeners() {
+        const productSelect = document.getElementById("checkout-product");
+        const quantityInput = document.getElementById("checkout-quantity");
+        const couponInput = document.getElementById("checkout-coupon");
+
+        if (productSelect)
+          productSelect.addEventListener("change", updateCheckoutTotal);
+        if (quantityInput)
+          quantityInput.addEventListener("input", updateCheckoutTotal);
+        if (couponInput)
+          couponInput.addEventListener("input", updateCheckoutTotal);
+      }
+
+      // Initialize on load
+      document.addEventListener("DOMContentLoaded", setupCheckoutListeners);
     </script>
   </body>
 </html>
