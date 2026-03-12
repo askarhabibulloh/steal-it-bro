@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickThumb - Image Processing Service</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .card {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      .card-header {
+        background-color: #ffffff;
+        border-bottom: 2px solid #e9ecef;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+      }
+      .btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+      }
+      .output-box {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 15px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .processed-image {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 5px;
+        background-color: white;
+      }
+      .alert-custom {
+        border-radius: 8px;
+        border-left: 4px solid #0d6efd;
+      }
+      .nav-link.active {
+        background-color: #0d6efd !important;
+        color: white !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5">
+      <!-- Header -->
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark mb-3">
+          <i class="fas fa-image text-primary me-2"></i>
+          QuickThumb
+        </h1>
+        <p class="lead text-muted">
+          Instant image resizing service for design teams
+        </p>
+        <div class="alert alert-info alert-custom d-inline-block px-4">
+          <i class="fas fa-info-circle me-2"></i>
+          Upload any image and specify width for instant resizing
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="row">
+        <!-- Left Panel: Upload Form -->
+        <div class="col-lg-5 mb-4">
+          <div class="card h-100">
+            <div class="card-header py-3">
+              <h5 class="mb-0">
+                <i class="fas fa-upload me-2"></i>Upload & Resize
+              </h5>
+            </div>
+            <div class="card-body">
+              <form method="POST" action="/" enctype="multipart/form-data">
+                <!-- File Upload -->
+                <div class="mb-4">
+                  <label for="file" class="form-label fw-semibold">
+                    <i class="fas fa-file-image me-1"></i>
+                    Select Image File
+                  </label>
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="file"
+                    name="file"
+                    required
+                  />
+                  <div class="form-text">
+                    Supported formats: PNG, JPG, JPEG, GIF, BMP (max 16MB)
+                  </div>
+                </div>
+
+                <!-- Width Input -->
+                <div class="mb-4">
+                  <label for="width" class="form-label fw-semibold">
+                    <i class="fas fa-arrows-alt-h me-1"></i>
+                    Target Width (pixels)
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="width"
+                    name="width"
+                    value="{{ width }}"
+                    placeholder="e.g., 300"
+                    required
+                  />
+                  <div class="form-text">
+                    Enter width in pixels. Height will be adjusted automatically
+                    to maintain aspect ratio.
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                  <i class="fas fa-magic me-2"></i>
+                  Process Image
+                </button>
+              </form>
+
+              <!-- Tips Section -->
+              <div class="mt-5 pt-4 border-top">
+                <h6 class="fw-semibold mb-3">
+                  <i class="fas fa-lightbulb me-2"></i>
+                  Usage Tips
+                </h6>
+                <ul class="list-unstyled text-muted small">
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Use common image formats for best results
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Width values between 50-2000 pixels work best
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-clock text-info me-2"></i>
+                    Processing timeout is 10 seconds
+                  </li>
+                  <li>
+                    <i
+                      class="fas fa-exclamation-triangle text-warning me-2"
+                    ></i>
+                    Check output for any processing errors
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Results -->
+        <div class="col-lg-7">
+          <!-- Flash Messages -->
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <div class="alert alert-dismissible fade show mb-4" role="alert">
+            {% for message in messages %}
+            <div class="d-flex align-items-center">
+              <i class="fas fa-info-circle me-2"></i>
+              <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endif %} {% endwith %}
+
+          <!-- Processed Image Display -->
+          {% if processed_image and success %}
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">
+                <i class="fas fa-check-circle text-success me-2"></i>Processed
+                Image
+              </h5>
+            </div>
+            <div class="card-body text-center">
+              <img
+                src="{{ url_for('static', filename=processed_image) }}"
+                alt="Processed Image"
+                class="processed-image mb-3"
+              />
+              <p class="text-muted mb-0">
+                <i class="fas fa-download me-1"></i>
+                Right-click and "Save image as" to download
+              </p>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Command Output -->
+          <!-- <div class="card">
+            <div
+              class="card-header py-3 d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">
+                <i class="fas fa-terminal me-2"></i>Command Output
+              </h5>
+              <span class="badge bg-{{ 'success' if success else 'danger' }}">
+                {{ 'Success' if success else 'Failed' }}
+              </span>
+            </div>
+            <div class="card-body">
+              {% if output %}
+              <div class="output-box">
+                <pre class="mb-0">{{ output }}</pre>
+              </div>
+              <div class="mt-3 text-muted small">
+                <i class="fas fa-info-circle me-1"></i>
+                Output includes command execution details and any errors
+              </div>
+              {% else %}
+              <div class="text-center py-5">
+                <div class="mb-3">
+                  <i class="fas fa-terminal fa-3x text-muted"></i>
+                </div>
+                <h5 class="text-muted mb-2">No Output Yet</h5>
+                <p class="text-muted">
+                  Upload an image and specify width to see command execution
+                  results here.
+                </p>
+              </div>
+              {% endif %}
+            </div>
+          </div> -->
+
+          <!-- Debug & Info Section -->
+          <!-- <div class="mt-4">
+            <ul class="nav nav-tabs" id="infoTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="debug-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#debug"
+                  type="button"
+                  role="tab"
+                >
+                  <i class="fas fa-bug me-1"></i>Debug Info
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="injection-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#injection"
+                  type="button"
+                  role="tab"
+                >
+                  <i class="fas fa-shield-alt me-1"></i>Security Notes
+                </button>
+              </li>
+            </ul>
+            <div
+              class="tab-content border border-top-0 rounded-bottom p-4 bg-white"
+              id="infoTabsContent"
+            >
+              <div class="tab-pane fade show active" id="debug" role="tabpanel">
+                <p class="mb-3">
+                  <i class="fas fa-code me-1"></i>
+                  For debugging and educational purposes, visit the
+                  <a href="/debug" target="_blank" class="text-decoration-none"
+                    >debug endpoint</a
+                  >
+                  to see system information and environment details.
+                </p>
+                <div class="alert alert-warning small">
+                  <i class="fas fa-exclamation-triangle me-1"></i>
+                  Debug information may reveal sensitive system details. Use
+                  responsibly.
+                </div>
+              </div>
+              <div class="tab-pane fade" id="injection" role="tabpanel">
+                <p class="mb-2">
+                  <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                  This application is intentionally vulnerable to command
+                  injection for educational purposes.
+                </p>
+                <ul class="small text-muted mb-0">
+                  <li>
+                    User input is directly concatenated into shell commands
+                  </li>
+                  <li>No input validation or sanitization is performed</li>
+                  <li>Shell command execution uses <code>shell=True</code></li>
+                  <li>
+                    Command output is displayed to assist with payload debugging
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="mt-5 pt-4 border-top text-center text-muted">
+        <p class="mb-2">
+          <i class="fas fa-code me-1"></i>
+          QuickThumb v1.0 |
+          <i class="fas fa-shield-alt ms-3 me-1"></i>
+          Educational Lab - Command Injection Vulnerability
+        </p>
+        <p class="small">
+          Use this tool responsibly for image processing and security education
+          purposes only.
+        </p>
+      </footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Initialize Bootstrap components
+      document.addEventListener("DOMContentLoaded", function () {
+        // Enable Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+        );
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function () {
+          var alerts = document.querySelectorAll(".alert-dismissible");
+          alerts.forEach(function (alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+          });
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>
