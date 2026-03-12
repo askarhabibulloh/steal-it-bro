@@ -1,8 +1,8 @@
-# 🏁 Race Condition Lab
+# Race Condition Lab
 
 Laboratorium pendidikan untuk memahami dan mengeksploitasi **race condition vulnerabilities** dalam aplikasi web dengan sistem autentikasi multi-user. Dibangun dengan Node.js/Express dan antarmuka **Neo-Brutalist** yang modern.
 
-## 🎯 Tujuan Pembelajaran
+## Tujuan Pembelajaran
 
 - Memahami **TOCTOU (Time-of-Check to Time-of-Use)** vulnerabilities
 - Mengenal pola **check-then-act** yang rentan race condition
@@ -10,22 +10,22 @@ Laboratorium pendidikan untuk memahami dan mengeksploitasi **race condition vuln
 - Menguji exploit dengan berbagai metode (dashboard, scripts)
 - Mempelajari cara memperbaiki kerentanan ini
 
-## ✨ Fitur Terbaru
+## Fitur Terbaru
 
-### 🎨 Neo-Brutalist UI
+### Neo-Brutalist UI
 
 - Desain bold dengan border tebal dan hard shadows
 - Layout desktop-optimized (1200px container)
 - Responsive design dengan breakpoints yang tepat
 - Real-time log dengan warna kode
 
-### 🔐 Sistem Autentikasi Lengkap
+### Sistem Autentikasi Lengkap
 
 - Signup, Login, Logout dengan session management
 - Per-user balance (setiap user punya saldo sendiri)
 - Session-based authentication dengan header `x-session-id`
 
-### 🏪 E-commerce Simulation
+### E-commerce Simulation
 
 - **Transfer**: Kirim uang ke user lain
 - **Checkout**: Beli produk HP ($50) atau Laptop ($100)
@@ -33,13 +33,13 @@ Laboratorium pendidikan untuk memahami dan mengeksploitasi **race condition vuln
 - **Shared Stock**: Stok HP dan Laptop dibagi semua user
 - **Items Shipped**: Track total item yang sudah dibeli
 
-### ⚠️ Vulnerable Endpoints
+### Vulnerable Endpoints
 
 - **POST `/api/transfer`**: Race condition pada per-user balance
 - **POST `/api/checkout`**: Race condition pada shared stock dan coupon count
 - **Intentional delay**: 2 detik untuk memperlebar race window
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -61,7 +61,7 @@ node server.js
 
 Server akan berjalan di `http://localhost:3000`
 
-## 🖥️ Menggunakan Dashboard
+## Menggunakan Dashboard
 
 ### 1. Akses Dashboard
 
@@ -103,7 +103,7 @@ Buka `http://localhost:3000` di browser.
 # Kirim request bersamaan
 ```
 
-## 🔧 API Reference
+## API Reference
 
 ### Authentication Endpoints
 
@@ -139,7 +139,7 @@ curl http://localhost:3000/api/status \
   -H "x-session-id: YOUR_SESSION_ID"
 ```
 
-#### POST `/api/transfer` ⚠️ VULNERABLE
+#### POST `/api/transfer` VULNERABLE
 
 ```bash
 curl -X POST http://localhost:3000/api/transfer \
@@ -150,7 +150,7 @@ curl -X POST http://localhost:3000/api/transfer \
 
 **Vulnerability**: Check balance → sleep 2s → update balance
 
-#### POST `/api/checkout` ⚠️ VULNERABLE
+#### POST `/api/checkout` VULNERABLE
 
 ```bash
 curl -X POST http://localhost:3000/api/checkout \
@@ -181,7 +181,7 @@ curl -X POST http://localhost:3000/api/reset
 curl http://localhost:3000/api/health
 ```
 
-## 🧪 Exploit Scripts
+## Exploit Scripts
 
 ### Python (`exploit-race.py`)
 
@@ -216,7 +216,7 @@ chmod +x exploit-race.sh
 bash exploit-race.sh --endpoint checkout --threads 3 --session $SESSION_ID
 ```
 
-## 🎯 Skenario Vulnerable
+## Skenario Vulnerable
 
 ### 1. Transfer Overspending
 
@@ -239,25 +239,25 @@ bash exploit-race.sh --endpoint checkout --threads 3 --session $SESSION_ID
 **Actual**: Multiple users dapat checkout gratis
 **Root Cause**: Check coupon count → sleep → update count
 
-## 🛡️ Cara Memperbaiki
+## Cara Memperbaiki
 
 ### 1. Atomic Operations
 
 ```javascript
-// ❌ VULNERABLE
+// VULNERABLE
 if (balance >= amount) {
   await sleep(2000);
   balance -= amount;
 }
 
-// ✅ FIXED - Atomic operation
+// FIXED - Atomic operation
 balance = Math.max(balance - amount, 0);
 ```
 
 ### 2. Database Transactions
 
 ```javascript
-// ✅ FIXED - Database transaction
+// FIXED - Database transaction
 await db.transaction(async (trx) => {
   const user = await trx("users").where("id", userId).first();
   if (user.balance >= amount) {
@@ -284,7 +284,7 @@ await mutex.runExclusive(async () => {
 ### 4. Optimistic Locking
 
 ```javascript
-// ✅ FIXED - Optimistic locking dengan version
+// FIXED - Optimistic locking dengan version
 const result = await db("users")
   .where("id", userId)
   .andWhere("balance", ">=", amount)
@@ -300,7 +300,7 @@ if (result === 0) {
 }
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 race-condition-lab/
@@ -319,7 +319,7 @@ race-condition-lab/
 └── README.md                # This file
 ```
 
-## 🧠 Key Concepts
+## Key Concepts
 
 ### TOCTOU (Time-of-Check to Time-of-Use)
 
@@ -340,7 +340,7 @@ race-condition-lab/
 2. **Shared stock**: HP dan Laptop stock dibagi semua users
 3. **Coupon count**: DISKON100 count dibagi semua users
 
-## 🔍 Testing Methodology
+## Testing Methodology
 
 ### 1. Manual Testing (Dashboard)
 
@@ -359,14 +359,14 @@ race-condition-lab/
 - **Success**: Race condition exploited (negative balance/stock)
 - **Failure**: Proper synchronization (requests fail appropriately)
 
-## 📚 Learning Resources
+## Learning Resources
 
 - [OWASP: Race Conditions](https://owasp.org/www-community/attacks/Race_condition)
 - [CWE-362: Concurrent Execution using Shared Resource](https://cwe.mitre.org/data/definitions/362.html)
 - [TOCTOU Vulnerability](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use)
 - [Atomic Operations](https://en.wikipedia.org/wiki/Linearizability)
 
-## ⚠️ Important Notes
+## Important Notes
 
 ### Educational Purpose Only
 
@@ -387,7 +387,7 @@ race-condition-lab/
 - Inventory systems: Stock inconsistency
 - Booking systems: Double booking
 
-## 🚨 Disclaimer
+## Disclaimer
 
 **FOR EDUCATIONAL PURPOSES ONLY**
 
@@ -399,7 +399,7 @@ Lab ini dirancang untuk:
 
 **Jangan pernah** deploy code dengan pattern vulnerable ke production environment.
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork repository
 2. Create feature branch
@@ -407,12 +407,12 @@ Lab ini dirancang untuk:
 4. Push to branch
 5. Create Pull Request
 
-## 📄 License
+## License
 
 MIT License - Educational Use Only
 
 ---
 
-**Happy Learning! 🚀**
+**Happy Learning!**
 
 Jika ada pertanyaan atau menemukan bug, silakan buka issue di repository.
