@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  blind-xss-lab:
+  electrostore-demo:
     build: .
-    container_name: electrostore-blind-xss
+    container_name: electrostore-demo
     ports:
       - "3000:3000"
     environment:
@@ -22,8 +22,8 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - blind-xss-network
+      - electrostore-network
 
 networks:
-  blind-xss-network:
+  electrostore-network:
     driver: bridge

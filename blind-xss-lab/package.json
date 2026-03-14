@@ -1,21 +1,21 @@
 {
-  "name": "blind-xss-lab",
+  "name": "electrostore-demo",
   "version": "1.0.0",
-  "description": "Blind XSS Lab - E-commerce Delivery Notes Vulnerability Simulation",
+  "description": "ElectroStore demo storefront for presentations and internal demos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
     "bot": "node bot.js",
     "init-db": "node scripts/init-db.js",
-    "docker:build": "docker build -t blind-xss-lab .",
-    "docker:run": "docker run -p 3000:3000 blind-xss-lab"
+    "clean": "node scripts/clean-artefacts.js",
+    "reset": "npm run clean && npm run init-db",
+    "docker:build": "docker build -t electrostore-demo .",
+    "docker:run": "docker run -p 3000:3000 electrostore-demo"
   },
   "keywords": [
-    "xss",
-    "security",
-    "lab",
-    "education",
+    "demo",
+    "ecommerce",
     "nodejs",
     "express"
   ],

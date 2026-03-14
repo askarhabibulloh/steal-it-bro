@@ -28,13 +28,33 @@ class Database {
         return;
       }
 
-      this.db.exec(data, (err) => {
-        if (err) {
-          console.error("Error executing schema:", err);
-        } else {
-          console.log("Database schema initialized successfully");
-        }
-      });
+      // If the products table already exists, assume the schema and seed
+      // data have been applied previously. Skip executing the SQL to avoid
+      // re-inserting seed data which would create duplicate products.
+      this.db.get(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='products'",
+        (checkErr, row) => {
+          if (checkErr) {
+            console.error("Error checking existing tables:", checkErr);
+            return;
+          }
+
+          if (row) {
+            console.log(
+              "Database already initialized; skipping schema execution",
+            );
+            return;
+          }
+
+          this.db.exec(data, (execErr) => {
+            if (execErr) {
+              console.error("Error executing schema:", execErr);
+            } else {
+              console.log("Database schema initialized successfully");
+            }
+          });
+        },
+      );
     });
   }
 

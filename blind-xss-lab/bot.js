@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Admin Bot for Blind XSS Lab
+ * Admin Bot for ElectroStore Demo
  *
  * This bot simulates an admin user who periodically reviews orders.
- * It automatically logs in as admin, views new orders, and triggers any XSS payloads
- * that have been injected into delivery notes.
- *
- * The bot runs every 60 seconds to simulate real admin behavior.
+ * It automatically logs in as admin and views new orders for presentation/demo purposes.
  */
 
 const { chromium } = require("playwright");
@@ -194,14 +191,6 @@ class AdminBot {
       await this.page.waitForSelector(".order-details-card", {
         timeout: 10000,
       });
-
-      // Check for XSS vulnerability warning
-      const hasXssWarning = await this.page.$(".xss-warning");
-      if (hasXssWarning) {
-        this.log(
-          `Order #${order.id} has XSS vulnerability warning (as expected)`,
-        );
-      }
 
       // Extract delivery notes for logging
       const deliveryNotes = await this.page.evaluate(() => {

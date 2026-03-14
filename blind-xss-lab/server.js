@@ -351,7 +351,6 @@ app.get("/admin/dashboard", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-// VULNERABLE PAGE: Admin order details (XSS vulnerability here)
 app.get("/admin/order/:id", requireAuth, requireAdmin, async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
@@ -363,8 +362,6 @@ app.get("/admin/order/:id", requireAuth, requireAdmin, async (req, res) => {
       });
     }
 
-    // CRITICAL VULNERABILITY: Using <%- %> to render user input without escaping
-    // This allows XSS payloads in delivery_notes to execute
     res.render("admin/order-details", { order });
   } catch (error) {
     console.error("Order details error:", error);
@@ -420,5 +417,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`ElectroStore server running on http://localhost:${PORT}`);
   console.log("Admin credentials: admin / admin");
-  console.log("XSS Vulnerability: Delivery notes in admin order details page");
+  console.log("Demo server started. Use the admin account to review orders.");
 });

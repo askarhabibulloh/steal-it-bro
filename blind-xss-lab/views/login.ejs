@@ -67,44 +67,10 @@
                     </form>
                 </div>
                 
-                <div class="card-footer">
-                    <div class="security-warning">
-                        <i class="fas fa-shield-alt"></i>
-                        <strong>Demo Credentials:</strong> 
-                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-                            <li><strong>Admin:</strong> username: <code>admin</code>, password: <code>admin</code></li>
-                            <li><strong>Regular User:</strong> Create your own account via Sign Up</li>
-                        </ul>
-                    </div>
-                </div>
+                <!-- Demo credentials removed for presentation-ready demo -->
             </div>
             
-            <div class="card mt-3" style="max-width: 500px; margin: 0 auto;">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-graduation-cap"></i> Lab Instructions
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <h4>How to practice Blind XSS:</h4>
-                    <ol>
-                        <li><strong>Create a regular user account</strong> (or use admin credentials above)</li>
-                        <li><strong>Browse products</strong> and add items to your cart</li>
-                        <li><strong>Checkout</strong> and enter shipping address</li>
-                        <li><strong>Inject XSS payload</strong> in the "Delivery Notes" field</li>
-                        <li><strong>Wait for admin bot</strong> to view your order (runs every 60 seconds)</li>
-                        <li><strong>Monitor your payload execution</strong> (e.g., using a request bin)</li>
-                    </ol>
-                    
-                    <div class="xss-warning mt-2">
-                        <h4>
-                            <i class="fas fa-bug"></i> XSS Vulnerability Location
-                        </h4>
-                        <p>The admin order details page renders delivery notes using <code><%- %></code> (unescaped output) instead of <code><%= %></code> (escaped output).</p>
-                        <p><strong>Sample payload:</strong> <code><!-- <script>alert('XSS')</script> --></code></p>
-                    </div>
-                </div>
-            </div>
+            <!-- Demo notes removed from login page -->
         </div>
     </main>
 

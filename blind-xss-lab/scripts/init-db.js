@@ -22,29 +22,17 @@ console.log(`Schema: ${SCHEMA_PATH}`);
 // Check if database already exists
 const dbExists = fs.existsSync(DB_PATH);
 if (dbExists) {
-  console.log("\n⚠️  Database already exists.");
-  const readline = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  readline.question(
-    "Do you want to delete and recreate it? (yes/no): ",
-    (answer) => {
-      if (answer.toLowerCase() === "yes" || answer.toLowerCase() === "y") {
-        console.log("Deleting existing database...");
-        fs.unlinkSync(DB_PATH);
-        initializeDatabase();
-      } else {
-        console.log("Keeping existing database.");
-        process.exit(0);
-      }
-      readline.close();
-    },
+  console.log(
+    "\n⚠️  Database already exists. Deleting and recreating to ensure a clean state...",
   );
-} else {
-  initializeDatabase();
+  try {
+    fs.unlinkSync(DB_PATH);
+  } catch (err) {
+    console.error("Failed to delete existing database:", err.message);
+    process.exit(1);
+  }
 }
+initializeDatabase();
 
 /**
  * Initialize the database with schema and seed data
@@ -166,12 +154,11 @@ function finalizeSetup(db) {
             console.log("\n🎉 Setup Complete!");
             console.log("=".repeat(40));
             console.log("\nNext steps:");
-            console.log("1. Start the server: npm start");
-            console.log("2. Start the admin bot: npm run bot");
-            console.log("3. Access the app: http://localhost:3000");
-            console.log("4. Login as admin: admin / admin");
-            console.log("5. Create user accounts and test XSS payloads");
-            console.log("\nHappy hacking! 🛡️");
+            console.log("2. Start the server: npm start");
+            console.log("3. Start the admin bot (optional): npm run bot");
+            console.log("4. Access the app: http://localhost:3000");
+            console.log("5. Login as admin: admin / admin");
+            console.log("\nDatabase initialized and ready for demo use.");
 
             process.exit(0);
           });

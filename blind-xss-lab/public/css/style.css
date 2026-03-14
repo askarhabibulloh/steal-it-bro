@@ -1,4 +1,4 @@
-/* ElectroStore - Blind XSS Lab CSS */
+/* ElectroStore - Demo CSS */
 /* Clean, professional design with solid colors only (no gradients) */
 
 :root {
@@ -542,7 +542,6 @@ textarea.form-control {
   word-wrap: break-word;
 }
 
-/* XSS Vulnerability Warning */
 .xss-warning {
   background-color: #fef2f2;
   border: 2px solid var(--danger-color);

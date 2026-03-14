@@ -41,12 +41,7 @@
                     <h3 class="card-title">
                         <i class="fas fa-bolt"></i> Welcome to ElectroStore
                     </h3>
-                    <p>Browse our selection of premium electronics. Add items to your cart and checkout to practice Blind XSS injection in the delivery notes field.</p>
-                    
-                    <div class="security-warning">
-                        <i class="fas fa-shield-alt"></i>
-                        <strong>Security Training:</strong> This lab demonstrates a real XSS vulnerability. Inject payloads in delivery notes during checkout.
-                    </div>
+                    <p>Browse our selection of premium electronics. Add items to your cart and checkout to complete a test order.</p>
                 </div>
             </div>
 
@@ -94,42 +89,7 @@
                 <% }) %>
             </div>
 
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-graduation-cap"></i> How to Practice XSS
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                        <div>
-                            <h4><i class="fas fa-shopping-cart"></i> Step 1: Add to Cart</h4>
-                            <p>Select products and add them to your shopping cart.</p>
-                        </div>
-                        <div>
-                            <h4><i class="fas fa-credit-card"></i> Step 2: Checkout</h4>
-                            <p>Proceed to checkout and fill in shipping details.</p>
-                        </div>
-                        <div>
-                            <h4><i class="fas fa-bug"></i> Step 3: Inject Payload</h4>
-                            <p>Enter XSS payload in "Delivery Notes" field:</p>
-                            <code><!-- <script>alert('XSS')</script> --></code>
-                        </div>
-                        <div>
-                            <h4><i class="fas fa-robot"></i> Step 4: Wait for Bot</h4>
-                            <p>Admin bot views new orders every 60 seconds, triggering your payload.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="xss-warning mt-3">
-                        <h4>
-                            <i class="fas fa-exclamation-triangle"></i> XSS Vulnerability Details
-                        </h4>
-                        <p>The admin order details page uses unescaped output (<code><%- %></code>) instead of escaped output (<code><%= %></code>) for delivery notes, allowing script execution.</p>
-                        <p><strong>Real-world impact:</strong> Steal admin session cookies, redirect to malicious sites, or perform actions as admin.</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Demo notes removed from products page -->
         </div>
     </main>
 

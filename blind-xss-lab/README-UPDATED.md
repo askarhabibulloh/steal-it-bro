@@ -1,6 +1,6 @@
-# Blind XSS Lab - ElectroStore (FIXED VERSION)
+# ElectroStore — Demo Storefront (Updated)
 
-A self-contained educational platform demonstrating Blind Cross-Site Scripting (XSS) vulnerabilities in an e-commerce context. This lab simulates a real-world scenario where delivery notes submitted by customers are executed as scripts in the Admin Dashboard.
+This file was consolidated into README.md. See [README.md](README.md) for the public-facing demo documentation.
 
 ## 🎯 Overview
 

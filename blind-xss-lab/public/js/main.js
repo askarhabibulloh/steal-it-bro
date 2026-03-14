@@ -1,6 +1,6 @@
 /**
- * ElectroStore - Blind XSS Lab
- * Main JavaScript file for the security training application
+ * ElectroStore Demo - Main JavaScript
+ * Core UI behaviors for demo storefront
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initFormValidations();
 
   // Initialize security warnings
-  initSecurityWarnings();
+  // security helpers removed for presentation mode
 
   // Initialize auto-refresh for admin pages
   initAutoRefresh();
@@ -119,54 +119,7 @@ function initFormValidations() {
  * Initialize security warnings and educational content
  */
 function initSecurityWarnings() {
-  // Highlight XSS vulnerable fields
-  const xssFields = document.querySelectorAll('textarea[name="deliveryNotes"]');
-  xssFields.forEach((field) => {
-    // Add visual indicator
-    const label = field.closest(".form-group").querySelector("label");
-    if (label && !label.querySelector(".xss-indicator")) {
-      const indicator = document.createElement("span");
-      indicator.className = "xss-indicator";
-      indicator.innerHTML = ' <i class="fas fa-bug"></i> XSS VULNERABLE';
-      indicator.style.color = "var(--danger-color)";
-      indicator.style.fontSize = "0.8rem";
-      indicator.style.fontWeight = "bold";
-      label.appendChild(indicator);
-    }
-
-    // Add help text
-    field.addEventListener("focus", function () {
-      showXssHelp();
-    });
-  });
-
-  // Add XSS payload examples to delivery notes field
-  const deliveryNotesField = document.querySelector(
-    'textarea[name="deliveryNotes"]',
-  );
-  if (deliveryNotesField) {
-    const examplesContainer = document.createElement("div");
-    examplesContainer.className = "xss-examples mt-2";
-    examplesContainer.innerHTML = `
-            <div class="small text-muted mb-1">Try these XSS payloads:</div>
-            <div class="d-flex flex-wrap gap-1">
-                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="insertXssPayload('<script>alert(\\'XSS\\')</script>')">
-                    Basic Alert
-                </button>
-                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="insertXssPayload('<img src=x onerror=\\'alert(\\'XSS\\')\\'>')">
-                    Image XSS
-                </button>
-                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="insertXssPayload('<svg onload=\\'alert(\\'XSS\\')\\'>')">
-                    SVG XSS
-                </button>
-            </div>
-        `;
-
-    const formGroup = deliveryNotesField.closest(".form-group");
-    if (formGroup) {
-      formGroup.appendChild(examplesContainer);
-    }
-  }
+  // intentionally left blank for presentation mode
 }
 
 /**
@@ -198,48 +151,9 @@ function initAutoRefresh() {
   }
 }
 
-/**
- * Show XSS help information
- */
-function showXssHelp() {
-  const existingHelp = document.querySelector(".xss-help-modal");
-  if (existingHelp) return;
+// XSS help removed for presentation mode
 
-  const helpModal = document.createElement("div");
-  helpModal.className = "xss-help-modal";
-  helpModal.innerHTML = `
-        <div class="xss-help-content">
-            <h5><i class="fas fa-graduation-cap"></i> XSS Training</h5>
-            <p>This field is <strong>vulnerable to Cross-Site Scripting (XSS)</strong>.</p>
-            <p>Any script you enter here will execute when an admin views your order.</p>
-            <p><strong>Educational purpose only!</strong></p>
-            <button class="btn btn-sm btn-primary mt-2" onclick="this.closest('.xss-help-modal').remove()">
-                Got it
-            </button>
-        </div>
-    `;
-
-  document.body.appendChild(helpModal);
-
-  // Auto-remove after 10 seconds
-  setTimeout(() => {
-    if (helpModal.parentNode) {
-      helpModal.remove();
-    }
-  }, 10000);
-}
-
-/**
- * Insert XSS payload into delivery notes field
- */
-function insertXssPayload(payload) {
-  const field = document.querySelector('textarea[name="deliveryNotes"]');
-  if (field) {
-    field.value = payload;
-    showToast("XSS payload inserted. Remember: Educational use only!", "info");
-    field.focus();
-  }
-}
+// payload insertion helpers removed
 
 /**
  * Show toast notification
@@ -391,39 +305,6 @@ toastStyles.textContent = `
     color: var(--dark-color);
 }
 
-.xss-help-modal {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--warning-color);
-    color: var(--dark-color);
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
-    max-width: 400px;
-    animation: slideDown 0.3s ease;
-}
-
-.xss-help-content {
-    text-align: center;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translate(-50%, -20px);
-        opacity: 0;
-    }
-    to {
-        transform: translate(-50%, 0);
-        opacity: 1;
-    }
-}
-
-.xss-examples .btn-xs {
-    padding: 0.125rem 0.5rem;
-    font-size: 0.75rem;
-}
+/* XSS-specific styles removed */
 `;
 document.head.appendChild(toastStyles);

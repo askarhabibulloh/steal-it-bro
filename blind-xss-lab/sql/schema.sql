@@ -1,7 +1,4 @@
--- ElectroStore Database Schema
--- Blind XSS Lab - E-commerce Platform
-
--- Users table
+-- Demo E-commerce Platform
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
