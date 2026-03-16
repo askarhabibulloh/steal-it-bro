@@ -20,6 +20,7 @@ app.use(
     secret: "xss-lab-secret",
     resave: false,
     saveUninitialized: true,
+    cookie: { httpOnly: false, secure: false },
   }),
 );
 
@@ -117,7 +118,21 @@ db.serialize(() => {
 // Routes
 app.get("/", (req, res) => {
   db.all("SELECT * FROM posts", (err, posts) => {
-    const feedHtml = `
+    if (!req.session.user_id) {
+      sendFeed(null);
+      return;
+    }
+
+    db.get(
+      "SELECT username FROM users WHERE id = ?",
+      [req.session.user_id],
+      (err, user) => {
+        sendFeed(user ? user.username : null);
+      },
+    );
+
+    function sendFeed(username) {
+      const feedHtml = `
             <main class="feed">
                 ${posts
                   .map(
@@ -139,13 +154,15 @@ app.get("/", (req, res) => {
             </main>
         `;
 
-    res.send(
-      generateHTML(
-        "Home",
-        `<div class="layout"><div>${feedHtml}</div><aside class="sidebar"><div class="card"><h4>About</h4><p>Educational XSS lab — safe playground.</p></div></aside></div>`,
-        req.session.user_id,
-      ),
-    );
+      res.send(
+        generateHTML(
+          "Home",
+          `<div class="layout"><div>${feedHtml}</div><aside class="sidebar"><div class="card"><h4>About</h4><p>Educational XSS lab — safe playground.</p></div></aside></div>`,
+          req.session.user_id,
+          username,
+        ),
+      );
+    }
   });
 });
 
@@ -189,26 +206,42 @@ app.get("/post/:id", (req, res) => {
                 </div>`
           : '<p><a href="/login">Login</a> untuk menambahkan komentar.</p>';
 
-        res.send(
-          generateHTML(
-            post.title,
-            `
-                <div class="post-detail">
-                    <h2>${post.title}</h2>
-                  <img class="post-detail-image" src="/${post.image_path}" alt="${post.title}">
-                    <div class="post-content">
-                        <p>${post.content}</p>
-                    </div>
-                </div>
-                <div class="comments">
-                    <h3>Komentar</h3>
-                    ${commentsHtml}
-                    ${commentForm}
-                </div>
-            `,
-            req.session.user_id,
-          ),
+        if (!req.session.user_id) {
+          sendPost(null);
+          return;
+        }
+
+        db.get(
+          "SELECT username FROM users WHERE id = ?",
+          [req.session.user_id],
+          (err, user) => {
+            sendPost(user ? user.username : null);
+          },
         );
+
+        function sendPost(username) {
+          res.send(
+            generateHTML(
+              post.title,
+              `
+                  <div class="post-detail">
+                      <h2>${post.title}</h2>
+                    <img class="post-detail-image" src="/${post.image_path}" alt="${post.title}">
+                      <div class="post-content">
+                          <p>${post.content}</p>
+                      </div>
+                  </div>
+                  <div class="comments">
+                      <h3>Komentar</h3>
+                      ${commentsHtml}
+                      ${commentForm}
+                  </div>
+              `,
+              req.session.user_id,
+              username,
+            ),
+          );
+        }
       },
     );
   });
@@ -235,6 +268,8 @@ app.get("/login", (req, res) => {
             <p class="auth-links">Belum punya akun? <a href="/register">Daftar di sini</a></p>
         </div>
     `,
+      null,
+      null,
     ),
   );
 });
@@ -268,6 +303,8 @@ app.post("/login", (req, res) => {
                     <p class="auth-links">Belum punya akun? <a href="/register">Daftar di sini</a></p>
                 </div>
             `,
+          null,
+          null,
         ),
       );
     }
@@ -295,6 +332,8 @@ app.get("/register", (req, res) => {
             <p class="auth-links">Sudah punya akun? <a href="/login">Login di sini</a></p>
         </div>
     `,
+      null,
+      null,
     ),
   );
 });
@@ -329,6 +368,8 @@ app.post("/register", (req, res) => {
                     <p class="auth-links">Sudah punya akun? <a href="/login">Login di sini</a></p>
                 </div>
             `,
+            null,
+            null,
           ),
         );
       } else {
@@ -354,14 +395,70 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-app.get("/reset-comments", (req, res) => {
-  if (req.session.user_id) {
-    db.run("DELETE FROM comments", function (err) {
-      if (err) console.error(err);
-      res.redirect("/");
-    });
-  } else {
-    res.redirect("/login");
+app.get("/profile", (req, res) => {
+  if (!req.session.user_id) {
+    return res.redirect("/login");
+  }
+
+  db.get(
+    "SELECT id, username FROM users WHERE id = ?",
+    [req.session.user_id],
+    (err, user) => {
+      if (!user) {
+        return res.redirect("/login");
+      }
+
+      res.send(
+        generateHTML(
+          `Profile: ${user.username}`,
+          `
+          <div style="display: flex; justify-content: center; padding: 40px 0;">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 32px; max-width: 400px; width: 100%; text-align: center;">
+              <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--accent); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; font-weight: bold;">${user.username.charAt(0).toUpperCase()}</div>
+              <h2 style="margin: 0 0 8px; font-size: 1.5rem;">${escapeHtml(user.username)}</h2>
+              <p style="color: var(--text-muted); margin: 0 0 20px;">User Profile</p>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">User ID: ${user.id}</p>
+            </div>
+          </div>
+        `,
+          req.session.user_id,
+          user.username,
+        ),
+      );
+    },
+  );
+});
+
+app.get("/search", (req, res) => {
+  const query = req.query.q || "";
+
+  if (!req.session.user_id) {
+    sendSearch(null);
+    return;
+  }
+
+  db.get(
+    "SELECT username FROM users WHERE id = ?",
+    [req.session.user_id],
+    (err, user) => {
+      sendSearch(user ? user.username : null);
+    },
+  );
+
+  function sendSearch(username) {
+    res.send(
+      generateHTML(
+        `Search: ${query}`,
+        `
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 20px;">
+            <h2>Hasil pencarian untuk: ${query}</h2>
+            <p style="color: var(--text-muted);">Coba cari dengan keyword atau masukkan payload XSS untuk test reflected XSS.</p>
+          </div>
+        `,
+        req.session.user_id,
+        username,
+      ),
+    );
   }
 });
 
@@ -376,9 +473,9 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-function generateHTML(title, content, userId = null) {
+function generateHTML(title, content, userId = null, username = null) {
   const navLinks = userId
-    ? `<a href="/">Home</a><a href="/logout">Logout</a><a href="/reset-comments" onclick="return confirm('Hapus semua komentar?')" class="danger-link">Reset Comments</a>`
+    ? `<a href="/">Home</a><a href="/profile">Profile</a><a href="/logout">Logout</a>`
     : `<a href="/">Home</a><a href="/login">Login</a><a href="/register">Register</a>`;
 
   return `
@@ -393,8 +490,8 @@ function generateHTML(title, content, userId = null) {
     <body>
         <header class="site-header">
             <div class="container topbar">
-                <div class="brand">XSS Lab</div>
-                <div class="search"><input placeholder="Search posts or topics..." aria-label="Search"></div>
+                <a href="/" class="brand-logo" title="Back to Home"><img src="/favicon.svg" alt="XSS Lab" width="36" height="36"></a>
+                <form class="search" action="/search" method="get"><input type="text" name="q" placeholder="Search posts or topics..." aria-label="Search"></form>
             <div class="nav-actions"><button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Light mode</button>${navLinks}</div>
             </div>
         </header>
