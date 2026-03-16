@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "reset-comments": "node reset_comments.js"
+    "reset-comments": "node reset_comments.js",
+    "seed": "node scripts/seed_posts.js",
+    "reset": "node scripts/reset_all.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
