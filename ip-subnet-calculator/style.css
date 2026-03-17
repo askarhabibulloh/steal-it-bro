@@ -1,0 +1,26 @@
+@layer components {
+  /* Enhanced Glassmorphism styling */
+  .dashboard-panel {
+    @apply bg-white/60 dark:bg-base-925/40 backdrop-blur-md backdrop-filter border border-zinc-200/50 dark:border-white/10 rounded-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all;
+  }
+
+  .label-mono {
+    @apply text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-semibold;
+  }
+
+  .form-input {
+    @apply border border-zinc-300/50 dark:border-white/10 bg-white/50 dark:bg-base-900/30 backdrop-blur-sm rounded-lg px-4 py-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-accent/60 focus:ring-2 focus:ring-accent/20 transition-all shadow-inner;
+  }
+
+  .kpi-card {
+    @apply dashboard-panel flex-1 flex flex-col;
+  }
+
+  .kpi-value {
+    @apply text-2xl font-light text-zinc-900 dark:text-white mt-2 font-mono;
+  }
+
+  .kpi-label {
+    @apply label-mono;
+  }
+}
