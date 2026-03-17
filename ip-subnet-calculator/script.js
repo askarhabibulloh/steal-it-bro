@@ -4,8 +4,6 @@
   const vlsmInput = document.getElementById("vlsmInput");
   const subnetPrefixInput = document.getElementById("subnetPrefixInput");
   const themeToggle = document.getElementById("themeToggle");
-  const menuToggle = document.getElementById("menuToggle");
-  const menuOverlay = document.getElementById("menuOverlay");
   const navDrawer = document.getElementById("navDrawer");
   const overviewCards = document.getElementById("overviewCards");
   const vlsmTable = document.getElementById("vlsmTable");
@@ -559,10 +557,6 @@
 
   themeToggle.addEventListener("click", () => {
     applyTheme(document.body.dataset.theme === "light" ? "dark" : "light");
-  });
-
-  menuToggle.addEventListener("click", () => {
-    applyMode(document.body.dataset.mode || "overview");
   });
 
   navButtons.forEach((button) => {
