@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List Modern</title>
+    <meta name="description" content="Aplikasi To-Do List modern dengan penyimpanan lokal.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="theme-toggle">
+        <button class="theme-toggle-btn" aria-label="Toggle Theme">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <main class="container">
+        <header>
+            <h1>Tugas Saya</h1>
+            <p id="date-display">Senin, 1 Januari</p>
+        </header>
+
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="Apa yang ingin Anda kerjakan?" autocomplete="off">
+            <button id="add-btn" aria-label="Tambah Tugas">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Semua</button>
+            <button class="filter-btn" data-filter="active">Aktif</button>
+            <button class="filter-btn" data-filter="completed">Selesai</button>
+        </div>
+
+        <ul id="todo-list" class="todo-list">
+            <!-- List item akan ditambahkan di sini oleh JavaScript -->
+        </ul>
+        
+        <div class="status-bar">
+            <span id="items-left">0 tugas tersisa</span>
+            <button id="clear-completed">Hapus yang selesai</button>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
