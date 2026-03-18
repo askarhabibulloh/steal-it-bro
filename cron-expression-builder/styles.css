@@ -97,6 +97,10 @@ select.input-field {
   color: var(--text-primary);
   font-size: 13px;
 }
+.cron-description {
+  min-height: 1.5em;
+  color: gold;
+}
 .preset-btn {
   background: transparent;
   color: var(--text-secondary);

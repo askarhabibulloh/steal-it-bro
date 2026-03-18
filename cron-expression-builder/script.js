@@ -12,8 +12,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const dateApply = document.getElementById("date-apply");
   const dateClear = document.getElementById("date-clear");
   const outputBox = document.getElementById("output-box");
+  const cronDescription = document.getElementById("cron-description");
   const copyBtn = document.getElementById("copy-btn");
   const statusChip = document.getElementById("status-chip");
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   function buildCron() {
     const parts = [
@@ -29,6 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateOutput() {
     const expr = buildCron();
     outputBox.textContent = expr + (command.value ? "  " + command.value : "");
+    if (cronDescription && window.CronUtils) {
+      cronDescription.textContent =
+        window.CronUtils.describeCronExpression(expr);
+    }
+    updateDateTrigger();
   }
 
   // wire inputs
@@ -42,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let m = 1; m <= 12; m++) {
       const opt = document.createElement("option");
       opt.value = String(m);
-      opt.textContent = String(m);
+      opt.textContent = monthNames[m - 1];
       dateMonthSelect.appendChild(opt);
     }
   }
@@ -76,6 +96,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // panel open/close
   function showDatePanel() {
     if (!datePanel) return;
+    // sync selects to current month/day values
+    if (dateMonthSelect) {
+      const mCur = parseInt(month.value, 10);
+      const m = !isNaN(mCur) && mCur >= 1 && mCur <= 12 ? mCur : 1;
+      // ensure day options match month
+      const max = daysInMonth(m);
+      populateDayOptions(max);
+      dateMonthSelect.value = String(m);
+      const dCur = parseInt(day.value, 10);
+      dateDaySelect.value = String(
+        !isNaN(dCur) && dCur >= 1 && dCur <= max ? dCur : 1,
+      );
+    }
     datePanel.style.display = "block";
   }
   function hideDatePanel() {
@@ -112,6 +145,21 @@ document.addEventListener("DOMContentLoaded", () => {
       updateOutput();
       hideDatePanel();
     });
+
+  // update the trigger text to reflect selected date
+  function updateDateTrigger() {
+    if (!dateTrigger) return;
+    const m = month.value;
+    const d = day.value;
+    const mNum = parseInt(m, 10);
+    const dNum = parseInt(d, 10);
+    if (!isNaN(mNum) && !isNaN(dNum)) {
+      const label = monthNames[mNum - 1] || String(mNum);
+      dateTrigger.textContent = `${label} ${dNum}`;
+    } else {
+      dateTrigger.textContent = "Pick specific date";
+    }
+  }
 
   // close panel when clicking outside or pressing Escape
   document.addEventListener("click", (ev) => {
