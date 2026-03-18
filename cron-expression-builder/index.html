@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cron Expression Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="mb-10">
+        <h1 class="text-3xl">Cron Expression Builder</h1>
+        <p class="desc mt-2">minimalist crontab expression composer.</p>
+      </header>
+
+      <section class="card p-8 mb-8">
+        <form id="cron-form" class="space-y-6">
+          <div>
+            <div class="label-mono">CRON FIELDS</div>
+            <div class="fields-grid mt-2">
+              <div>
+                <div class="label-mono">Minute</div>
+                <input
+                  id="minute"
+                  class="input-field no-radius w-full mt-1"
+                  value="*"
+                  placeholder="* or 0-59"
+                />
+                <div class="desc mt-2">0-59 or "*" or "*/5"</div>
+              </div>
+              <div>
+                <div class="label-mono">Hour</div>
+                <input
+                  id="hour"
+                  class="input-field no-radius w-full mt-1"
+                  value="*"
+                  placeholder="* or 0-23"
+                />
+                <div class="desc mt-2">0-23 or "*"</div>
+              </div>
+              <div>
+                <div class="label-mono">Day</div>
+                <input
+                  id="day"
+                  class="input-field no-radius w-full mt-1"
+                  value="*"
+                  placeholder="* or 1-31"
+                />
+                <div class="desc mt-2">1-31 or "*"</div>
+              </div>
+              <div>
+                <div class="label-mono">Month</div>
+                <input
+                  id="month"
+                  class="input-field no-radius w-full mt-1"
+                  value="*"
+                  placeholder="* or 1-12"
+                />
+                <div class="desc mt-2">1-12 or "*"</div>
+              </div>
+              <div>
+                <div class="label-mono">Weekday</div>
+                <input
+                  id="weekday"
+                  class="input-field no-radius w-full mt-1"
+                  value="*"
+                  placeholder="* or 0-6 (Sun=0)"
+                />
+                <div class="desc mt-2">0-6 or "*"; 0 or 7 = Sun</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="label-mono">Command</div>
+            <input
+              id="command"
+              class="input-field no-radius w-full mt-1"
+              placeholder="e.g. /usr/bin/backup.sh"
+            />
+            <div class="desc mt-2">The command to run. Use absolute path</div>
+          </div>
+
+          <div>
+            <div class="label-mono">Specific Date</div>
+            <div class="relative">
+              <div
+                id="date-trigger"
+                class="input-field no-radius w-full mt-1"
+                tabindex="0"
+                role="button"
+              >
+                Pick specific date
+              </div>
+              <div
+                id="date-panel"
+                class="date-panel"
+                style="
+                  display: none;
+                  position: absolute;
+                  left: 0;
+                  margin-top: 8px;
+                  z-index: 40;
+                "
+              >
+                <div style="display: flex; gap: 8px; align-items: center">
+                  <div style="flex: 1">
+                    <label class="label-mono">Month</label>
+                    <select
+                      id="date-month-select"
+                      class="input-field no-radius w-full mt-1"
+                    ></select>
+                  </div>
+                  <div style="width: 88px">
+                    <label class="label-mono">Day</label>
+                    <select
+                      id="date-day-select"
+                      class="input-field no-radius w-full mt-1"
+                    ></select>
+                  </div>
+                </div>
+                <div
+                  style="
+                    margin-top: 8px;
+                    display: flex;
+                    gap: 8px;
+                    justify-content: flex-end;
+                  "
+                >
+                  <button id="date-clear" type="button" class="preset-btn">
+                    Clear
+                  </button>
+                  <button id="date-apply" type="button" class="copy-btn">
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="desc mt-2">
+              Pick a date to set Day & Month fields automatically.
+            </div>
+          </div>
+
+          <div>
+            <div class="label-mono mb-2">Presets</div>
+            <div class="flex gap-2 flex-wrap">
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-minute"
+              >
+                Every Minute
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-5-minutes"
+              >
+                Every 5 Minutes
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-15-minutes"
+              >
+                Every 15 Minutes
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-30-minutes"
+              >
+                Every 30 Minutes
+              </button>
+              <button type="button" class="preset-btn" data-preset="hourly">
+                Hourly
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-2-hours"
+              >
+                Every 2 Hours
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-6-hours"
+              >
+                Every 6 Hours
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="twice-daily"
+              >
+                Twice Daily (8:00,20:00)
+              </button>
+              <button type="button" class="preset-btn" data-preset="midnight">
+                Midnight
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-monday"
+              >
+                Every Monday
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="sunday-midnight"
+              >
+                Sunday Midnight
+              </button>
+              <button type="button" class="preset-btn" data-preset="weekdays">
+                Weekdays
+              </button>
+              <button type="button" class="preset-btn" data-preset="monthly">
+                Monthly (1st)
+              </button>
+              <button
+                type="button"
+                class="preset-btn"
+                data-preset="every-hour-at-15"
+              >
+                Every Hour @ :15
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section class="card p-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="label-mono">Generated Cron</div>
+            <div class="desc mt-1">
+              Live preview updates as you edit fields.
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div id="status-chip" class="chip" style="visibility: hidden">
+              Copied
+            </div>
+            <button id="copy-btn" class="copy-btn">Copy</button>
+          </div>
+        </div>
+
+        <div class="output no-radius" id="output-box">* * * * *</div>
+        <div
+          class="desc mt-3"
+          id="validation-msg"
+          style="color: var(--text-secondary)"
+        ></div>
+      </section>
+    </main>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
