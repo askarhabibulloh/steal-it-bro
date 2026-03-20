@@ -52,8 +52,6 @@ let uiState = {
   selectedRooms: new Set(),
 };
 
-function setLoadStatus(message) {}
-
 function fetchWithTimeout(url, timeoutMs = 20000) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -251,10 +249,6 @@ function renderTableSection(section, ruang, rows, filters) {
   body.appendChild(table);
 }
 
-function getRoomUsageData() {
-  return roomUsageData;
-}
-
 function renderRoomCheckboxList(containerId, prefix) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -347,7 +341,6 @@ function scheduleRoomModeLoad() {
     roomModeDebounceTimer = null;
     loadRoomModeData();
   }, ROOM_MODE_DEBOUNCE_MS);
-  setLoadStatus("Menunggu pilihan ruang stabil...");
 }
 
 function loadDateModeData() {
@@ -356,7 +349,6 @@ function loadDateModeData() {
   const displayDate = dateInput.value;
 
   if (!displayDate) {
-    setLoadStatus("Pilih tanggal terlebih dahulu.");
     return;
   }
 
@@ -365,7 +357,6 @@ function loadDateModeData() {
 
   const selectedDate = getDateModeLoadDate();
   if (!selectedDate) {
-    setLoadStatus("Format tanggal tidak valid.");
     return;
   }
 
@@ -383,7 +374,6 @@ function loadRoomModeData() {
       document.getElementById("table-container"),
       "Pilih minimal satu ruang untuk menampilkan jadwal hari ini dan yang akan datang.",
     );
-    setLoadStatus("Pilih minimal satu ruang.");
     return;
   }
 
@@ -399,12 +389,10 @@ function loadAdvancedModeData() {
   const dateTo = document.getElementById("dateTo").value;
 
   if (selectedRooms.length === 0) {
-    setLoadStatus("Pilih minimal satu ruang untuk advanced filter.");
     return;
   }
 
   if (!dateFrom || !dateTo) {
-    setLoadStatus("Isi tanggal mulai dan tanggal selesai terlebih dahulu.");
     return;
   }
 
@@ -448,14 +436,6 @@ function loadAllRuang(filters = {}) {
     return;
   }
 
-  setLoadStatus(
-    mode === FILTER_MODE.DATE
-      ? "Memuat data tanggal secara paralel..."
-      : mode === FILTER_MODE.ROOM
-        ? "Memuat ruang terpilih secara paralel..."
-        : "Memuat data advanced secara paralel...",
-  );
-
   const tasks = roomsToLoad.map(({ ruang, csv, link }) => {
     const section = createRoomSectionSkeleton(ruang, link);
     container.appendChild(section);
@@ -475,11 +455,7 @@ function loadAllRuang(filters = {}) {
       });
   });
 
-  Promise.allSettled(tasks).then(() => {
-    if (loadToken === activeLoadToken) {
-      setLoadStatus("Data sudah dimuat.");
-    }
-  });
+  Promise.allSettled(tasks);
 }
 
 function navigateDate(direction) {
@@ -508,10 +484,6 @@ function initModeSwitching() {
         loadDateModeData();
       } else if (mode === FILTER_MODE.ROOM) {
         loadRoomModeData();
-      } else if (mode === FILTER_MODE.ADVANCED) {
-        setLoadStatus(
-          "Isi rentang tanggal dan pilih ruang, lalu klik Tampilkan Data.",
-        );
       }
     });
   });

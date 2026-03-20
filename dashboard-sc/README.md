@@ -15,7 +15,6 @@ Static dashboard untuk menampilkan data penggunaan ruangan dari Google Sheets CS
 - `styles.css` - tema neo brutalist.
 - `scriptasdf.js` - fetch CSV paralel dan render tabel.
 - `parserasdf.js` - parser CSV dengan fallback.
-- `slot_data.js` - stub agar tidak ada panggilan backend.
 - `papaparse.min.js` - salinan lokal PapaParse.
 
 ## Run as static files
