@@ -52,6 +52,132 @@ let uiState = {
   selectedRooms: new Set(),
 };
 
+/**
+ * Encode uiState to URL hash format
+ * Format: #mode=date&date=YYYY-MM-DD
+ *         #mode=room&rooms=A,B,C
+ *         #mode=advanced&rooms=A,B&from=YYYY-MM-DD&to=YYYY-MM-DD
+ */
+function encodeStateToHash() {
+  const params = new URLSearchParams();
+  params.set("mode", uiState.mode);
+
+  if (uiState.mode === FILTER_MODE.DATE) {
+    const dateInput = document.getElementById("dateFilter");
+    if (dateInput?.value) {
+      params.set("date", dateInput.value);
+    }
+  } else if (uiState.mode === FILTER_MODE.ROOM) {
+    const rooms = Array.from(uiState.selectedRooms).join(",");
+    if (rooms) {
+      params.set("rooms", rooms);
+    }
+  } else if (uiState.mode === FILTER_MODE.ADVANCED) {
+    const rooms = Array.from(uiState.selectedRooms).join(",");
+    const dateFrom = document.getElementById("dateFrom")?.value;
+    const dateTo = document.getElementById("dateTo")?.value;
+
+    if (rooms) params.set("rooms", rooms);
+    if (dateFrom) params.set("from", dateFrom);
+    if (dateTo) params.set("to", dateTo);
+  }
+
+  window.location.hash = params.toString();
+}
+
+/**
+ * Decode URL hash to restore uiState
+ */
+function decodeHashToState() {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return false;
+
+  const params = new URLSearchParams(hash);
+  const mode = params.get("mode");
+
+  if (!mode || !Object.values(FILTER_MODE).includes(mode)) {
+    return false;
+  }
+
+  uiState.mode = mode;
+
+  // Set up radio button
+  const modeInput = document.querySelector(
+    `input[name="filterMode"][value="${mode}"]`,
+  );
+  if (modeInput) {
+    modeInput.checked = true;
+    setMode(mode);
+  }
+
+  if (mode === FILTER_MODE.DATE) {
+    const date = params.get("date");
+    if (date) {
+      document.getElementById("dateFilter").value = date;
+      document.getElementById("dayName").textContent =
+        getIndonesianDayName(date);
+    }
+    return true;
+  } else if (mode === FILTER_MODE.ROOM) {
+    const roomsStr = params.get("rooms");
+    if (roomsStr) {
+      const rooms = roomsStr.split(",").filter((r) => r.trim());
+      uiState.selectedRooms = new Set(rooms);
+      syncAllRoomCheckboxes();
+    }
+    return true;
+  } else if (mode === FILTER_MODE.ADVANCED) {
+    const roomsStr = params.get("rooms");
+    const dateFrom = params.get("from");
+    const dateTo = params.get("to");
+
+    if (roomsStr) {
+      const rooms = roomsStr.split(",").filter((r) => r.trim());
+      uiState.selectedRooms = new Set(rooms);
+      syncAllRoomCheckboxes();
+    }
+    if (dateFrom) {
+      document.getElementById("dateFrom").value = dateFrom;
+    }
+    if (dateTo) {
+      document.getElementById("dateTo").value = dateTo;
+    }
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Update URL hash when state changes (call this after state modifications)
+ */
+function updateURLHash() {
+  encodeStateToHash();
+}
+
+/**
+ * Copy current shareable URL to clipboard
+ */
+function copyShareableURL() {
+  const url = window.location.href;
+  navigator.clipboard
+    .writeText(url)
+    .then(() => {
+      const button = document.getElementById("shareButton");
+      if (button) {
+        button.textContent = "✓ Copied!";
+        button.classList.add("copied");
+        setTimeout(() => {
+          button.textContent = "📋 Bagikan Hasil Ini";
+          button.classList.remove("copied");
+        }, 2000);
+      }
+    })
+    .catch(() => {
+      alert("Gagal copy URL. Coba lagi.");
+    });
+}
+
 function fetchWithTimeout(url, timeoutMs = 20000) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -472,6 +598,7 @@ function navigateDate(direction) {
     .toISOString()
     .split("T")[0];
   loadDateModeData();
+  updateURLHash();
 }
 
 function initModeSwitching() {
@@ -479,6 +606,7 @@ function initModeSwitching() {
     input.addEventListener("change", (event) => {
       const mode = event.target.value;
       setMode(mode);
+      updateURLHash();
 
       if (mode === FILTER_MODE.DATE) {
         loadDateModeData();
@@ -494,6 +622,7 @@ function initCheckboxListeners() {
     const panel = event.target.closest(".filter-panel");
     uiState.selectedRooms = readSelectedRoomsFromContainer(panel);
     syncAllRoomCheckboxes();
+    updateURLHash();
 
     if (uiState.mode === FILTER_MODE.ROOM) {
       scheduleRoomModeLoad();
@@ -509,6 +638,7 @@ function initDateListeners() {
   document.getElementById("dateFilter").addEventListener("change", () => {
     if (uiState.mode === FILTER_MODE.DATE) {
       loadDateModeData();
+      updateURLHash();
     }
   });
 
@@ -524,6 +654,7 @@ function initDateListeners() {
     .getElementById("applyAdvancedFilters")
     .addEventListener("click", () => {
       loadAdvancedModeData();
+      updateURLHash();
     });
 }
 
@@ -536,10 +667,31 @@ window.addEventListener("DOMContentLoaded", () => {
   initCheckboxListeners();
   initDateListeners();
 
+  // Initialize share button
+  const shareButton = document.getElementById("shareButton");
+  if (shareButton) {
+    shareButton.addEventListener("click", copyShareableURL);
+  }
+
   const today = getCurrentDateUTC7();
   document.getElementById("dateFilter").value = today;
   document.getElementById("dayName").textContent = getIndonesianDayName(today);
 
-  setMode(FILTER_MODE.DATE);
-  loadDateModeData();
+  // Try to restore state from URL hash
+  const stateRestored = decodeHashToState();
+
+  if (stateRestored) {
+    // State was restored from URL, load data based on restored state
+    if (uiState.mode === FILTER_MODE.DATE) {
+      loadDateModeData();
+    } else if (uiState.mode === FILTER_MODE.ROOM) {
+      loadRoomModeData();
+    } else if (uiState.mode === FILTER_MODE.ADVANCED) {
+      loadAdvancedModeData();
+    }
+  } else {
+    // Normal initialization
+    setMode(FILTER_MODE.DATE);
+    loadDateModeData();
+  }
 });

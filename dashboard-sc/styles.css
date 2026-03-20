@@ -429,6 +429,39 @@ a {
   background: #eef2ff;
 }
 
+.share-button {
+  min-height: 3rem;
+  padding: 0.7rem 1.2rem;
+  border: 4px solid var(--border);
+  background: var(--blue);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.18);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+  white-space: nowrap;
+}
+
+.share-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.18);
+}
+
+.share-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.share-button.copied {
+  background: #059669;
+}
+
 @media (min-width: 900px) {
   .controls {
     grid-template-columns: 1fr;
@@ -504,6 +537,11 @@ a {
 
   .apply-button {
     justify-content: center;
+  }
+
+  .share-button {
+    min-width: 0;
+    padding: 0.65rem 1rem;
   }
 
   .room-card {
