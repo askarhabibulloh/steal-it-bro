@@ -16,17 +16,91 @@
   <body>
     <div class="page-shell">
       <section class="controls neo-card">
-        <div>
-          <span class="eyebrow">Filter tanggal</span>
-          <p class="controls__lead">
-            Gunakan date picker atau tombol prev/next untuk berpindah hari.
-          </p>
+        <div class="mode-switch" role="radiogroup" aria-label="Mode filter">
+          <label class="mode-option">
+            <input
+              type="radio"
+              name="filterMode"
+              id="modeDate"
+              value="date"
+              checked
+            />
+            <span>Filter tanggal</span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="filterMode" id="modeRoom" value="room" />
+            <span>Filter ruang</span>
+          </label>
+          <label class="mode-option">
+            <input
+              type="radio"
+              name="filterMode"
+              id="modeAdvanced"
+              value="advanced"
+            />
+            <span>Advanced</span>
+          </label>
         </div>
-        <div class="date-navigation">
-          <button id="prevDate" class="date-nav-button" type="button">◀</button>
-          <span id="dayName" class="day-name">Hari</span>
-          <input type="date" id="dateFilter" class="date-input" />
-          <button id="nextDate" class="date-nav-button" type="button">▶</button>
+
+        <div class="filter-panels">
+          <section class="filter-panel" id="datePanel">
+            <div class="filter-panel__header">
+              <p class="filter-panel__hint">
+                Gunakan date picker atau tombol prev/next untuk berpindah hari.
+              </p>
+            </div>
+            <div class="date-navigation">
+              <button id="prevDate" class="date-nav-button" type="button">
+                ◀
+              </button>
+              <span id="dayName" class="day-name">Hari</span>
+              <input type="date" id="dateFilter" class="date-input" />
+              <button id="nextDate" class="date-nav-button" type="button">
+                ▶
+              </button>
+            </div>
+          </section>
+
+          <section class="filter-panel" id="roomPanel" hidden>
+            <div class="filter-panel__header">
+              <p class="filter-panel__hint">
+                Pilih ruang yang ingin ditampilkan.
+              </p>
+            </div>
+            <div id="roomCheckboxList" class="checkbox-grid"></div>
+          </section>
+
+          <section class="filter-panel" id="advancedPanel" hidden>
+            <div class="filter-panel__header">
+              <p class="filter-panel__hint">
+                Pilih rentang tanggal dan ruang, lalu tekan tombol tampilkan
+                data.
+              </p>
+            </div>
+            <div class="date-range-grid">
+              <label class="field-group">
+                <span>Mulai</span>
+                <input type="date" id="dateFrom" class="date-input" />
+              </label>
+              <label class="field-group">
+                <span>Selesai</span>
+                <input type="date" id="dateTo" class="date-input" />
+              </label>
+            </div>
+            <div
+              id="advancedRoomCheckboxList"
+              class="checkbox-grid checkbox-grid--compact"
+            ></div>
+            <div class="filter-actions">
+              <button
+                id="applyAdvancedFilters"
+                class="apply-button"
+                type="button"
+              >
+                Tampilkan Data
+              </button>
+            </div>
+          </section>
         </div>
       </section>
 

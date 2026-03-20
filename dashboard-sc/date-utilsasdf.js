@@ -63,3 +63,27 @@ function getCurrentDateUTC7() {
   const utc7Date = new Date(now.getTime() + 7 * 60 * 60 * 1000);
   return utc7Date.toISOString().split("T")[0];
 }
+
+function stripDayName(dateStr) {
+  if (!dateStr) return "";
+
+  // Format: "Sunday, April 26, 2026" -> "April 26, 2026"
+  const parts = dateStr.split(", ");
+  if (parts.length >= 2) {
+    return parts.slice(1).join(", ");
+  }
+
+  return dateStr;
+}
+
+function parseDateForSort(dateStr) {
+  // Parse "April 26, 2026" to Date object for sorting
+  if (!dateStr) return new Date(0);
+
+  const date = new Date(dateStr);
+  if (!isNaN(date.getTime())) {
+    return date;
+  }
+
+  return new Date(0);
+}
