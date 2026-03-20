@@ -1,31 +1,65 @@
-function parseCSV(csvText) {
-  const rows = csvText.split(/\r?\n/);
+function parseCSVWithFallback(csvText) {
+  const rows = [];
+  let currentRow = [];
+  let currentField = "";
+  let inQuotes = false;
 
-  return rows.map((row) => {
-    let fields = [];
-    let currentField = "";
-    let inQuotes = false;
+  for (let i = 0; i < csvText.length; i++) {
+    const char = csvText[i];
+    const nextChar = csvText[i + 1];
 
-    for (let i = 0; i < row.length; i++) {
-      const char = row[i];
-
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === "," && !inQuotes) {
-        fields.push(currentField);
-        currentField = "";
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentField += '"';
+        i += 1;
       } else {
-        currentField += char;
+        inQuotes = !inQuotes;
       }
+      continue;
     }
 
-    fields.push(currentField);
+    if (char === "," && !inQuotes) {
+      currentRow.push(currentField);
+      currentField = "";
+      continue;
+    }
 
-    return fields.map((field) => {
-      if (field.startsWith('"') && field.endsWith('"')) {
-        return field.slice(1, -1);
+    if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && nextChar === "\n") {
+        i += 1;
       }
-      return field;
+
+      currentRow.push(currentField);
+      if (currentRow.length > 1 || currentRow[0] !== "") {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      currentField = "";
+      continue;
+    }
+
+    currentField += char;
+  }
+
+  currentRow.push(currentField);
+  if (currentRow.length > 1 || currentRow[0] !== "") {
+    rows.push(currentRow);
+  }
+
+  return rows;
+}
+
+function parseCSV(csvText) {
+  if (typeof Papa !== "undefined" && typeof Papa.parse === "function") {
+    const result = Papa.parse(csvText, {
+      skipEmptyLines: false,
+      dynamicTyping: false,
     });
-  });
+
+    if (!result.errors || result.errors.length === 0) {
+      return result.data;
+    }
+  }
+
+  return parseCSVWithFallback(csvText);
 }

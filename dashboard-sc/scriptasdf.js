@@ -36,73 +36,133 @@ const sources = [
   },
 ];
 
-let roomUsageData = {}; // Global variable to store all room data
+let roomUsageData = {};
+let activeLoadToken = 0;
 
-function renderTableSection(ruang, linkPublik, rows, selectedDate = null) {
-  const container = document.getElementById("table-container");
+function setLoadStatus(message) {
+  const status = document.getElementById("load-status");
+  if (status) {
+    status.textContent = message;
+  }
+}
+
+function fetchWithTimeout(url, timeoutMs = 20000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(url, { signal: controller.signal })
+    .then((response) => {
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return response.text();
+    })
+    .catch((error) => {
+      clearTimeout(timeoutId);
+      throw error;
+    });
+}
+
+function createRoomSectionSkeleton(ruang, linkPublik) {
+  const section = document.createElement("section");
+  section.className = "room-card neo-card";
+
+  const header = document.createElement("div");
+  header.className = "room-card__header";
+
+  const headingWrap = document.createElement("div");
+
+  const chip = document.createElement("span");
+  chip.className = "room-chip";
+  chip.textContent = `Ruang ${ruang}`;
+
+  const title = document.createElement("h3");
+  title.textContent = `Ruang ${ruang}`;
+
+  headingWrap.appendChild(chip);
+  headingWrap.appendChild(title);
+
+  const link = document.createElement("a");
+  link.href = linkPublik;
+  link.target = "_blank";
+  link.rel = "noreferrer noopener";
+  link.className = "room-link";
+  link.textContent = "[Link Form]";
+
+  header.appendChild(headingWrap);
+  header.appendChild(link);
+
+  const body = document.createElement("div");
+  body.className = "room-card__body room-card__body--loading";
+  body.dataset.roomBody = "true";
+  body.textContent = "Memuat data CSV...";
+
+  section.appendChild(header);
+  section.appendChild(body);
+
+  return section;
+}
+
+function renderRoomError(section, ruang, message) {
+  roomUsageData[ruang] = {
+    data_penggunaan: null,
+  };
+
+  const body = section.querySelector("[data-room-body]");
+  if (!body) return;
+
+  body.className = "room-card__body room-card__body--error";
+  body.textContent = message;
+}
+
+function renderTableSection(section, ruang, rows, selectedDate = null) {
+  const body = section.querySelector("[data-room-body]");
+  if (!body) return;
 
   roomUsageData[ruang] = {
     data_penggunaan: null,
   };
 
-  const section = document.createElement("section");
-
-  const heading = document.createElement("h3");
-  heading.innerHTML = `Ruang ${ruang} <small><a href="${linkPublik}" target="_blank">[Link Form]</a></small>`;
-  section.appendChild(heading);
-
-  const table = document.createElement("table");
-  const [headers, ...data] = rows;
-
-  // const filteredData = data.filter((row) => {
-  //   const normalized = normalizeDate(row[8]);
-  //   if (!normalized) return false;
-
-  //   if (selectedDate) {
-  //     return normalized === selectedDate;
-  //   } else {
-  //     const todayStr = getCurrentDateUTC7();
-  //     return normalized >= todayStr;
-  //   }
-  // });
-
+  const [headers = [], ...data] = rows;
   const filteredData = data.filter((row) => {
+    if (!row || row.length === 0) return false;
+
     const normalized = normalizeDate(row[8]);
     if (!normalized) return false;
 
     const notes = row[11]?.toLowerCase() || "";
-
-    // Filter jika deskripsi tidak kosong dan mengandung "perhatikan"
     const isRejected =
       notes && notes.includes("perhatikan") && !notes.includes("disetujui");
-
     if (isRejected) return false;
 
     if (selectedDate) {
       return normalized === selectedDate;
-    } else {
-      const todayStr = getCurrentDateUTC7();
-      return normalized >= todayStr;
     }
+
+    const todayStr = getCurrentDateUTC7();
+    return normalized >= todayStr;
   });
 
   roomUsageData[ruang].data_penggunaan = filteredData;
-  // roomUsageData[ruang].lastFilteredDate = selectedDate;
+  body.innerHTML = "";
 
   if (filteredData.length === 0) {
-    const info = document.createElement("p");
-    info.textContent = "Tidak ada data sesuai filter.";
-    section.appendChild(info);
-    container.appendChild(section);
+    body.className = "room-card__body room-empty";
+    body.textContent = "Tidak ada data sesuai filter.";
     return;
   }
 
+  body.className = "room-card__body";
+
+  const table = document.createElement("table");
   const selectedIndexes = [2, 4, 6, 7, 9, 11];
+
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
-  selectedIndexes.forEach((i) => {
+  selectedIndexes.forEach((index) => {
     const th = document.createElement("th");
-    th.textContent = headers[i]?.trim() || "";
+    th.textContent = headers[index]?.trim() || "";
     headerRow.appendChild(th);
   });
   thead.appendChild(headerRow);
@@ -111,71 +171,60 @@ function renderTableSection(ruang, linkPublik, rows, selectedDate = null) {
   const tbody = document.createElement("tbody");
   filteredData.forEach((row) => {
     const tr = document.createElement("tr");
-    selectedIndexes.forEach((i) => {
+    selectedIndexes.forEach((index) => {
       const td = document.createElement("td");
-      td.textContent = row[i]?.trim() || "";
+      td.textContent = row[index]?.trim() || "";
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
 
-  section.appendChild(table);
-  container.appendChild(section);
+  body.appendChild(table);
 }
 
 function getRoomUsageData() {
   return roomUsageData;
 }
 
-// function loadAllRuang(selectedDate = null) {
-//   document.getElementById("table-container").innerHTML = "";
-
-//   if (selectedDate) {
-//     const displayDate = new Date(selectedDate);
-//     displayDate.setDate(displayDate.getDate() + 1);
-//     const dayName = getIndonesianDayName(displayDate);
-//     document.getElementById("dayName").textContent = dayName;
-//   }
-
-//   sources.forEach(({ ruang, csv, link }) => {
-//     fetch(csv)
-//       .then((res) => res.text())
-//       .then((csvText) => {
-//         const rows = parseCSV(csvText);
-//         renderTableSection(ruang, link, rows, selectedDate);
-//       })
-//       .catch((err) => {
-//         const errorMsg = document.createElement("p");
-//         errorMsg.innerHTML = `Gagal memuat data ruang ${ruang}.`;
-//         document.getElementById("table-container").appendChild(errorMsg);
-//         console.error(err);
-//       });
-//   });
-// }
-
 async function loadAllRuang(selectedDate = null) {
-  document.getElementById("table-container").innerHTML = "";
+  const container = document.getElementById("table-container");
+  container.innerHTML = "";
+  roomUsageData = {};
+
+  const loadToken = ++activeLoadToken;
+  setLoadStatus("Memuat CSV ruang secara paralel...");
 
   if (selectedDate) {
     const displayDate = new Date(selectedDate);
     displayDate.setDate(displayDate.getDate() + 1);
-    const dayName = getIndonesianDayName(displayDate);
-    document.getElementById("dayName").textContent = dayName;
+    document.getElementById("dayName").textContent =
+      getIndonesianDayName(displayDate);
   }
 
-  for (const { ruang, csv, link } of sources) {
-    try {
-      const res = await fetch(csv);
-      const csvText = await res.text();
-      const rows = parseCSV(csvText);
-      renderTableSection(ruang, link, rows, selectedDate);
-    } catch (err) {
-      const errorMsg = document.createElement("p");
-      errorMsg.innerHTML = `Gagal memuat data ruang ${ruang}.`;
-      document.getElementById("table-container").appendChild(errorMsg);
-      console.error(err);
-    }
+  const tasks = sources.map(({ ruang, csv, link }) => {
+    const section = createRoomSectionSkeleton(ruang, link);
+    container.appendChild(section);
+
+    return fetchWithTimeout(csv)
+      .then((csvText) => parseCSV(csvText))
+      .then((rows) => {
+        if (loadToken !== activeLoadToken) return null;
+        renderTableSection(section, ruang, rows, selectedDate);
+        return null;
+      })
+      .catch((error) => {
+        if (loadToken !== activeLoadToken) return null;
+        renderRoomError(section, ruang, `Gagal memuat data ruang ${ruang}.`);
+        console.error(error);
+        return null;
+      });
+  });
+
+  await Promise.allSettled(tasks);
+
+  if (loadToken === activeLoadToken) {
+    setLoadStatus("Semua ruang sudah dimuat.");
   }
 }
 
@@ -199,8 +248,8 @@ function navigateDate(direction) {
   loadAllRuang(adjustedDateStr);
 }
 
-document.getElementById("dateFilter").addEventListener("change", (e) => {
-  const selectedDate = new Date(e.target.value);
+document.getElementById("dateFilter").addEventListener("change", (event) => {
+  const selectedDate = new Date(event.target.value);
   selectedDate.setDate(selectedDate.getDate() - 1);
 
   const adjustedDateStr = selectedDate.toISOString().split("T")[0];
@@ -223,8 +272,7 @@ window.addEventListener("DOMContentLoaded", () => {
   yesterday.setDate(yesterday.getDate() - 1);
   const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-  const dayName = getIndonesianDayName(today);
-  document.getElementById("dayName").textContent = dayName;
+  document.getElementById("dayName").textContent = getIndonesianDayName(today);
 
   loadAllRuang(yesterdayStr);
 });

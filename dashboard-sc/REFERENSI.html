@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Symmetry Atelier | Modular Neo-Brutalist Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "neo-black": "#000000",
+                        "neo-concrete": "#D1D5DB",
+                        "neo-white": "#FFFFFF",
+                        "neo-blue": "#2563EB",
+                        "neo-orange": "#F97316",
+                        "background": "#F3F4F6",
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Manrope", "sans-serif"],
+                    },
+                    borderWidth: {
+                        '4': '4px',
+                        '8': '8px',
+                    },
+                    boxShadow: {
+                        'brutal': '4px 4px 0px 0px #000000',
+                        'brutal-lg': '8px 8px 0px 0px #000000',
+                        'brutal-blue': '4px 4px 0px 0px #2563EB',
+                        'brutal-orange': '4px 4px 0px 0px #F97316',
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background text-neo-black font-body overflow-x-hidden;
+            }
+            h1, h2, h3, .serif-italic {
+                @apply font-headline;
+            }
+        }
+        .neo-card {
+            @apply bg-neo-white border-4 border-neo-black shadow-brutal transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal-lg;
+        }
+        .neo-button {
+            @apply bg-neo-black text-neo-white border-4 border-neo-black px-6 py-3 font-bold uppercase tracking-widest hover:bg-neo-white hover:text-neo-black transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+        }
+        .neo-accent-blue { @apply border-neo-blue text-neo-blue shadow-brutal-blue; }
+        .neo-accent-orange { @apply border-neo-orange text-neo-orange shadow-brutal-orange; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="antialiased p-4 md:p-8">
+<nav class="neo-card mb-8 sticky top-4 z-50 flex flex-wrap justify-between items-center p-4 md:p-6 bg-neo-white">
+<a class="text-3xl font-headline italic font-bold tracking-tighter" href="#">Symmetry Atelier</a>
+<div class="flex gap-4 md:gap-8 overflow-x-auto py-2">
+<a class="font-bold uppercase text-xs tracking-widest hover:text-neo-blue" href="#projects">Projects</a>
+<a class="font-bold uppercase text-xs tracking-widest hover:text-neo-blue" href="#philosophy">Philosophy</a>
+<a class="font-bold uppercase text-xs tracking-widest hover:text-neo-blue" href="#method">Method</a>
+</div>
+<button class="neo-button text-xs">Conversation</button>
+</nav>
+<main class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<header class="md:col-span-8 neo-card relative overflow-hidden flex flex-col justify-end p-8 min-h-[500px] bg-neo-concrete">
+<div class="absolute inset-0 z-0 opacity-40 mix-blend-multiply">
+<img alt="Atmospheric minimalist living space" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpbsTcPIuU6cud9fqCyoHECtdRjMjclQzqLIOrCjMS7oVuh3n4w5IzsyWihjPUnsHk2dLxvvdenNjxdlQYONNOe5S38W88XZzUa7VjLUZcDC44NV2E4nTtKwF7iLpcue5BlhIzfz7ywvQynblSbpMjXNQStekeKvkfMkvnluTgzPz0fR9j5lCuuMbIIPQVM0dBdw8XQ4UwFAFyVIuEL7V3R8VPSjDS846WWw7zMOficnKnssm3oRppJtzUieykaG5oWUqz5PxeVos"/>
+</div>
+<div class="relative z-10 bg-neo-white border-4 border-neo-black p-8 shadow-brutal max-w-2xl">
+<h1 class="text-4xl md:text-6xl font-light leading-none mb-8">
+                Spaces designed to feel <span class="italic text-neo-orange">lived-in</span>, calm, and enduring.
+            </h1>
+<a class="neo-button inline-flex items-center gap-2" href="#projects">
+                Explore Portfolio <span class="material-symbols-outlined">arrow_right_alt</span>
+</a>
+</div>
+</header>
+<section class="md:col-span-4 flex flex-col gap-8" id="philosophy">
+<div class="neo-card p-6 bg-neo-blue text-neo-white border-neo-black">
+<span class="text-xs font-bold uppercase tracking-widest block mb-4">Philosophy</span>
+<details class="group" open="">
+<summary class="cursor-pointer">
+<h2 class="text-3xl font-headline italic leading-tight mb-4 flex justify-between items-center">
+                        We believe in spaces that breathe.
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</h2>
+</summary>
+<div class="space-y-4 font-medium border-t-2 border-neo-white pt-4 mt-4">
+<p>Interiors that remove the unnecessary and reveal the emotional clarity of a room.</p>
+<p class="text-sm opacity-90">Design is not about filling a void; it is about understanding how light, shadow, and materiality interact to create a sense of belonging.</p>
+<p class="text-sm opacity-90">We curate environments that support the rhythms of daily life—spaces where the mind can settle.</p>
+</div>
+</details>
+</div>
+<div class="neo-card p-6 bg-neo-white border-neo-orange shadow-brutal-orange" id="method">
+<span class="text-xs font-bold uppercase tracking-widest block mb-4 text-neo-orange">The Method</span>
+<details class="group">
+<summary class="cursor-pointer">
+<h2 class="text-2xl font-headline italic leading-tight flex justify-between items-center text-neo-black">
+                        Three Disciplines
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</h2>
+</summary>
+<div class="mt-6 space-y-6">
+<div class="border-l-4 border-neo-orange pl-4">
+<h4 class="font-bold text-sm uppercase">01 Location</h4>
+<p class="text-xs">Deep study of the site—its light paths and history.</p>
+</div>
+<div class="border-l-4 border-neo-orange pl-4">
+<h4 class="font-bold text-sm uppercase">02 Focus</h4>
+<p class="text-xs">Tactile materials—wood, stone—to ground the inhabitant.</p>
+</div>
+<div class="border-l-4 border-neo-orange pl-4">
+<h4 class="font-bold text-sm uppercase">03 Established</h4>
+<p class="text-xs">Built to last using traditional techniques.</p>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section class="md:col-span-12 py-12" id="projects">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+<h2 class="text-5xl font-headline font-bold uppercase tracking-tighter bg-neo-black text-neo-white px-4 inline-block">Selected Works</h2>
+<div class="flex gap-2 flex-wrap">
+<button class="neo-button py-1 px-4 text-xs bg-neo-blue border-neo-blue">All</button>
+<button class="neo-button py-1 px-4 text-xs bg-neo-white text-neo-black">Residence</button>
+<button class="neo-button py-1 px-4 text-xs bg-neo-white text-neo-black">Industrial</button>
+<button class="neo-button py-1 px-4 text-xs bg-neo-white text-neo-black">Coastal</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="neo-card group overflow-hidden bg-neo-white">
+<div class="aspect-square relative overflow-hidden border-b-4 border-neo-black">
+<img alt="Residence 01" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5nr45dfXbbgtSPdA39NGxo1tlKrngFwchi9ghjDEM6EBgBq67zlaNlXO-BpPTsZi_sYvVakXl0iRBKR79EZrnDf7s3Y2c7t1lAS3hyxAu1NMZu3qVj4xDxd3ipS4nCzwW7exEC4EWctUn_0fRb03A3ONp29JWknFjAa7VQzbwqEIdVWyOKB8b_kAgTf4ezig6ic0YFm37tFiK67f6OkfWjqyTG4jNcZXcGbkaX3M9nr9KaeFBCKvRWC2_ga-F1qr9X4T6tAKoeTw"/>
+</div>
+<div class="p-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] bg-neo-orange text-neo-white px-2 mb-2 inline-block">RESIDENCE 01</span>
+<h3 class="text-xl font-bold mb-2">The Coastal Pavilion</h3>
+<p class="text-xs font-medium leading-relaxed opacity-70">A sanctuary defined by soft morning light and limestone.</p>
+</div>
+</div>
+<div class="neo-card group overflow-hidden bg-neo-white">
+<div class="aspect-square relative overflow-hidden border-b-4 border-neo-black">
+<img alt="Residence 02" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByFUtncqQcCRxNku0MD6avkfvf8iHAggwJTWcpWf9muBMLLg4G_bTxAnsge45Ca_0IdvW-zrPakCYsTyGhLLsfxBm_5bIoGKl2hOOkPssOS7mG_NGEnXIFf2Se6mY03Tvxph3xATXYoi4AbJl2lhFmPGCpeJPx34Z9DpGkklI6HlDFxwUj-dB6C-fyEgaSjpDOkovel2fsY8zf8TE0s5ryDETqNbpO9wUn5GTzGZ70OI-PgXm_ogtRutMA27K40k6Tjx6P75HcvH4"/>
+</div>
+<div class="p-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] bg-neo-blue text-neo-white px-2 mb-2 inline-block">RESIDENCE 02</span>
+<h3 class="text-xl font-bold mb-2">Urban Loft</h3>
+<p class="text-xs font-medium leading-relaxed opacity-70">Revealing the skeletal beauty of industrial heritage.</p>
+</div>
+</div>
+<div class="neo-card group overflow-hidden bg-neo-white">
+<div class="aspect-square relative overflow-hidden border-b-4 border-neo-black">
+<img alt="Residence 03" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkX1v1LL11osBGrHFgUHzaQP6Ae2dCA1WodnydAJbRcPQ9c6eYIbG7_xab8NDn1euVEo_Muw-pYuQ5nkSOOCAaxDBup3AecW31RJdsJ9G2RggLBz3U0PCJu6dPFtx2ywDRFM_TwH3L1mIvYE-2hBZCgxUboUhoiZA-lENsiDXlv7PvAqhA7CoWjeyPndSXVSaK8IsJh0pxzUJ3UtLsVz7_1nMCxI6ZdZceFm62aY1csjOBMUjj2E3fFFc7QMFnU03_3gyQbS4b3wE"/>
+</div>
+<div class="p-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] bg-neo-concrete text-neo-black px-2 mb-2 inline-block">RESIDENCE 03</span>
+<h3 class="text-xl font-bold mb-2">Mountain Retreat</h3>
+<p class="text-xs font-medium leading-relaxed opacity-70">Architecture that frames the horizon and wild terrain.</p>
+</div>
+</div>
+<div class="neo-card group overflow-hidden bg-neo-white">
+<div class="aspect-square relative overflow-hidden border-b-4 border-neo-black">
+<img alt="Residence 04" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXjKRpauPx3-79_xpJnoFeG_VmLIPLQsJC-wGnY5RNBwkNxYQxEDFaValUDWV-bgN-H528IGr02CV7nZRNSXijQsfoZw9c85WCFIZN_PFpHPLVzw0119JPwciewmUqUwFmXSHf2t6BYm60KNMwjDTg8KoNOsuAcKjTcTsFjRVtC8bXWewFUCx_32HGsywGkDf5hyC6zMy6XzRJXP3rsC5OKdVJ5DB6oujX7q6nCucHXcOHYxHZhvnNa_oU6nJ-qBU4Q6U7TrJGTFk"/>
+</div>
+<div class="p-6">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] bg-neo-black text-neo-white px-2 mb-2 inline-block">RESIDENCE 04</span>
+<h3 class="text-xl font-bold mb-2">Heritage Mews</h3>
+<p class="text-xs font-medium leading-relaxed opacity-70">A contemporary intervention prioritizing breath.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="md:col-span-12 neo-card bg-neo-orange p-12 text-neo-white border-neo-black flex flex-col items-center text-center gap-8">
+<h2 class="text-5xl md:text-7xl font-headline italic leading-none max-w-4xl">Let’s create a home that settles beautifully over time.</h2>
+<div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+<button class="neo-button bg-neo-white text-neo-black hover:bg-neo-black hover:text-neo-white">Start a Conversation</button>
+<button class="neo-button bg-neo-black border-neo-white text-neo-white hover:bg-neo-white hover:text-neo-black">View Selected Works</button>
+</div>
+</section>
+<section class="md:col-span-6 neo-card p-4 bg-neo-white">
+<div class="relative group h-full">
+<div class="aspect-[4/3] overflow-hidden border-4 border-neo-black">
+<img alt="Design process details" class="w-full h-full object-cover filter contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOWMhrzxH-0KR7wj-hqri-gam-PdT1RMTaVWEtubgYT4zH_acCInTdE6pNZuDIryyB2ZCyHAl1JhsFY8AZv0RhO7KoAKp3CCbTqvacaB2rY5o0Pj7U3Wx5ZLGExjvPTCSeR8UOYhNRwxQ1sF4Dp_MJwwzjekg5Nmn7KvXr27GP5PMrMZvjTpT_Pog3yAAh1DUOvK1avO2EfF1LmPUGTSC_cNT2gXDaOD33Gt0RZOj9Y7BvnPaV2r0uCyzb2ra-d7dsfRhYpW7OPL8"/>
+</div>
+<div class="absolute -bottom-6 -right-6 bg-neo-blue text-neo-white p-6 max-w-[280px] border-4 border-neo-black shadow-brutal">
+<p class="text-sm font-bold italic">"The detail is not just a part of the building, it is the building."</p>
+</div>
+</div>
+</section>
+<section class="md:col-span-6 neo-card p-8 bg-neo-concrete grid grid-cols-2 gap-8" id="contact">
+<div>
+<h5 class="font-bold text-xs tracking-widest uppercase mb-6 text-neo-blue">Connect</h5>
+<ul class="flex flex-col gap-3 text-xs font-black uppercase">
+<li><a class="hover:underline" href="#">Instagram</a></li>
+<li><a class="hover:underline" href="#">Pinterest</a></li>
+<li><a class="hover:underline" href="#">LinkedIn</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold text-xs tracking-widest uppercase mb-6 text-neo-blue">Inquiries</h5>
+<a class="text-xs font-black break-all hover:bg-neo-black hover:text-neo-white p-1 inline-block" href="mailto:hello@symmetryatelier.com">hello@symmetryatelier.com</a>
+<p class="mt-6 text-[10px] font-bold leading-relaxed opacity-70">74 Boundary St, Shoreditch<br/>London E2 7JQ</p>
+</div>
+<div class="col-span-2 pt-8 border-t-4 border-neo-black">
+<p class="text-[10px] font-black uppercase tracking-widest mb-4">© 2024 Studio Atelier. All rights reserved.</p>
+<div class="flex gap-4 text-[10px] font-black uppercase">
+<a class="hover:text-neo-blue" href="#">Privacy Policy</a>
+<a class="hover:text-neo-blue" href="#">Sitemap</a>
+</div>
+</div>
+</section>
+</main>
+<footer class="mt-12 text-center py-8">
+<p class="text-xs font-bold opacity-30 uppercase tracking-[0.5em]">Modular Design Interface v1.0 / Symmetry Atelier</p>
+</footer>
+
+</body></html>
