@@ -13,6 +13,21 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
   </head>
+  <!-- Google tag (gtag.js) -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-2CKP2KLB9G"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-2CKP2KLB9G");
+  </script>
+  <!--  -->
   <body>
     <div class="page-shell">
       <section class="controls neo-card">
@@ -102,6 +117,10 @@
             </div>
           </section>
         </div>
+        <p>
+          catatan : Jika tampilan tabel di hp berantakan disarankan menggunakan
+          desktop view
+        </p>
       </section>
 
       <section class="table-shell neo-card">
@@ -121,6 +140,8 @@
         <div id="table-container" class="room-list"></div>
       </section>
     </div>
+
+    <p style="text-align: center; margin-top: -30px;margin-bottom: 50px;">saran dan bug report bisa dikirimkan ke <a href="mailto:support@labnya-aska.my.id">support@labnya-aska.my.id</a></p>
 
     <script src="papaparse.min.js" defer></script>
     <script src="parserasdf.js" defer></script>

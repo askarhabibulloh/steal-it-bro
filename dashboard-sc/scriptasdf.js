@@ -168,7 +168,7 @@ function copyShareableURL() {
         button.textContent = "✓ Copied!";
         button.classList.add("copied");
         setTimeout(() => {
-          button.textContent = "📋 Bagikan Hasil Ini";
+          button.textContent = "Bagikan Hasil Ini";
           button.classList.remove("copied");
         }, 2000);
       }
@@ -372,7 +372,10 @@ function renderTableSection(section, ruang, rows, filters) {
   });
   table.appendChild(tbody);
 
-  body.appendChild(table);
+  const wrapper = document.createElement("div");
+  wrapper.className = "table-wrapper";
+  wrapper.appendChild(table);
+  body.appendChild(wrapper);
 }
 
 function renderRoomCheckboxList(containerId, prefix) {
