@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="PureTrack icon">
+  <rect width="192" height="192" rx="42" fill="#0c0c0e" />
+  <circle cx="96" cy="96" r="54" fill="none" stroke="#00ff66" stroke-width="10" opacity="0.9" />
+  <path d="M44 116 C68 88, 88 84, 108 98 S150 118, 148 78" fill="none" stroke="#00ff66" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="148" cy="78" r="9" fill="#ffffff" />
+  <circle cx="44" cy="116" r="9" fill="#ffffff" />
+</svg>
