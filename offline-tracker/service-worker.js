@@ -1,9 +1,11 @@
-const CACHE_NAME = "puretrack-cache-v2";
+const CACHE_NAME = "puretrack-cache-v3";
 const PRECACHE_URLS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./service-worker.js",
+  "./style.css",
+  "./app.js",
   "./icon-192.svg",
   "./icon-512.svg",
 ];
