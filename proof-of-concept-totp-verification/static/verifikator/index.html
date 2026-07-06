@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>TOTP Verifier - QR Scanner</title>
+    <link rel="stylesheet" href="/verifikator/style.css" />
+    <!-- QR Scanner library -->
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>📷 TOTP Verifier</h1>
+        <p class="subtitle">Scan QR code to verify user identity</p>
+
+        <!-- Server URL -->
+        <div class="server-config">
+          <label for="serverUrl">Server URL</label>
+          <input
+            type="text"
+            id="serverUrl"
+            placeholder="http://localhost:5000"
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- Scanner -->
+        <div class="scanner-wrapper" id="scannerWrapper">
+          <div id="scanner"></div>
+        </div>
+
+        <!-- Start Camera Button -->
+        <button class="camera-btn" id="startCameraBtn">📷 Start Camera</button>
+
+        <!-- Status / Instructions -->
+        <div class="status" id="status">
+          <div class="status-icon">📡</div>
+          <div class="status-text">Waiting for QR code...</div>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result" style="display: none">
+          <div class="result-icon" id="resultIcon">✅</div>
+          <div class="result-title" id="resultTitle">Verified</div>
+          <div class="result-detail" id="resultDetail">User: -</div>
+        </div>
+
+        <!-- History -->
+        <div class="history" id="history" style="display: none">
+          <h3>Scan History</h3>
+          <div id="historyList"></div>
+        </div>
+
+        <button class="reset-btn hidden" id="resetBtn">↻ Scan Again</button>
+      </div>
+    </div>
+
+    <script src="/verifikator/app.js"></script>
+  </body>
+</html>

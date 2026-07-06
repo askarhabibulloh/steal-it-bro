@@ -1,0 +1,277 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 32px 28px;
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  font-size: 15px;
+  color: #fff;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #667eea;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+input[type="text"]::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.2s;
+  margin-top: 8px;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.hint {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+/* ── QR Screen ── */
+
+.qr-card {
+  text-align: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.user-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.user-value {
+  font-weight: 700;
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+
+.logout-btn {
+  all: unset;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  margin-left: auto;
+  width: auto;
+  background: none;
+  margin-top: 0;
+}
+
+.logout-btn:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  transform: none;
+  box-shadow: none;
+}
+
+.qr-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 20px;
+}
+
+#qrcode {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  display: inline-block;
+}
+
+#qrcode img {
+  display: block;
+  width: 220px;
+  height: 220px;
+  image-rendering: pixelated;
+}
+
+/* ── Timer Ring ── */
+
+.timer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.timer-ring {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.timer-ring svg {
+  transform: rotate(-90deg);
+  width: 64px;
+  height: 64px;
+}
+
+.timer-ring svg circle {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.timer-ring svg circle.bg {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.timer-ring svg circle.progress {
+  stroke: #667eea;
+  stroke-dasharray: 282.74;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.3s linear;
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 6px;
+}
+
+.timer-label.warning {
+  color: #ffa502;
+}
+
+/* ── Hash Info ── */
+
+.hash-info {
+  text-align: left;
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.hash-info label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
+}
+
+.hash-info code {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  word-break: break-all;
+  font-family: "SF Mono", "Fira Code", monospace;
+  line-height: 1.4;
+}
