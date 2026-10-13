@@ -50,7 +50,7 @@ a {
 }
 
 .page-shell {
-  width: min(1240px, calc(100% - 2rem));
+  width: 1240px;
   margin: 0 auto;
   padding: 1rem 0 3rem;
   position: relative;
@@ -310,7 +310,7 @@ a {
 
 .table-shell__header h2 {
   margin: 0.25rem 0 0;
-  font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+  font-size: 2.8rem;
   line-height: 0.95;
   letter-spacing: -0.04em;
   text-transform: uppercase;
@@ -464,130 +464,4 @@ a {
 
 .share-button.copied {
   background: #059669;
-}
-
-@media (min-width: 900px) {
-  .controls {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  /* Pastikan mode-switch dan panel filter berada di atas-bawah pada layar lebar */
-  .controls > .mode-switch,
-  .controls > .filter-panels {
-    grid-column: 1;
-  }
-}
-
-@media (max-width: 640px) {
-  .page-shell {
-    width: min(100% - 1rem, 1240px);
-    padding-top: 0.5rem;
-  }
-
-  .controls,
-  .table-shell {
-    padding: 0.9rem;
-  }
-
-  .mode-switch,
-  .date-range-grid,
-  .checkbox-grid,
-  .checkbox-grid--compact {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-panel,
-  .mode-option,
-  .checkbox-option,
-  .apply-button {
-    width: 100%;
-  }
-
-  .table-shell__header {
-    align-items: start;
-  }
-
-  .table-shell__header h2 {
-    font-size: 1.5rem;
-  }
-
-  .day-name {
-    width: 100%;
-  }
-
-  .date-input {
-    width: 100%;
-  }
-
-  .date-navigation {
-    width: 100%;
-    align-items: stretch;
-  }
-
-  .date-nav-button,
-  .date-input,
-  .day-name {
-    width: 100%;
-  }
-
-  .date-nav-button {
-    min-width: 0;
-  }
-
-  .filter-actions {
-    justify-content: stretch;
-  }
-
-  .apply-button {
-    justify-content: center;
-  }
-
-  .share-button {
-    min-width: 0;
-    padding: 0.65rem 1rem;
-  }
-
-  .room-card {
-    padding: 0.85rem;
-  }
-
-  .room-card__header {
-    align-items: stretch;
-  }
-
-  .room-card__header h3 {
-    font-size: 1.2rem;
-  }
-
-  .room-link {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .room-card table {
-    width: 100%;
-    table-layout: auto;
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 0;
-  }
-
-  .room-card {
-    overflow: scroll;
-  }
-
-  .room-card th,
-  .room-card td {
-    padding: 0.65rem 0.55rem;
-    font-size: 0.88rem;
-  }
-
-  .room-card td {
-    white-space: normal;
-    word-break: break-word;
-  }
 }
