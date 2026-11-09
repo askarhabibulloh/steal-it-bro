@@ -1,0 +1,11 @@
+# Tidak ada third-party package eksternal yang dibutuhkan.
+# gcloud_floci.py hanya menggunakan Python Standard Library bawaan (Python >= 3.8):
+# - argparse
+# - json
+# - os
+# - sys
+# - time
+# - urllib (request, parse, error)
+#
+# File ini disediakan agar perintah `pip install -r requirements.txt`
+# pada setup virtualenv (venvFloci) tetap berjalan sukses tanpa error.
